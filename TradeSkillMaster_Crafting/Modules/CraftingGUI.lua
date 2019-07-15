@@ -310,8 +310,8 @@ function GUI:UpdateTradeSkills()
                 TSM.db.factionrealm.tradeSkills[playerName][skillName].link = link
                 if skillName == GetTradeSkillLine() and i <= 2 and not TSM.isSyncing then
                     TSM.db.factionrealm.tradeSkills[playerName][skillName].account = nil
-                    --TSM.db.factionrealm.tradeSkills[playerName][skillName].accountKey = TSMAPI.Sync:GetAccountKey()
-                    --TSM.Sync:BroadcastTradeSkillData()
+                    TSM.db.factionrealm.tradeSkills[playerName][skillName].accountKey = TSMAPI.Sync:GetAccountKey()
+                    TSM.Sync:BroadcastTradeSkillData()
                 end
             end
 		end
