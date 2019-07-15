@@ -79,7 +79,7 @@ function private:CreateMailTab()
         end
 
         InboxCloseButton:Hide()
-        MailFrameTab1:SetPoint("BOTTOMLEFT", "MailFrame", "BOTTOMLEFT", 24, -30)
+        MailFrameTab1:SetPoint("BOTTOMLEFT", MailFrame, "BOTTOMLEFT", 24, -32)
         if Postal_ModuleMenuButton then
 			Postal_ModuleMenuButton:Hide()
 		end
@@ -107,7 +107,7 @@ function private:CreateMailTab()
         MailFrameCloseButton:Show()]]--
 
 		InboxCloseButton:Show()
-		MailFrameTab1:SetPoint("BOTTOMLEFT", "MailFrame", "BOTTOMLEFT", 24, 44)
+		MailFrameTab1:SetPoint("BOTTOMLEFT", MailFrame, "BOTTOMLEFT", 24, 44)
 		if Postal_ModuleMenuButton then
 			Postal_ModuleMenuButton:Show()
         end
