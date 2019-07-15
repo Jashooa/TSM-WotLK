@@ -50,7 +50,7 @@ function TSM:OnInitialize()
 
 	-- Add this character to the alt list so it's not undercut by the player
 	TSM.db.factionrealm.player[UnitName("player")] = true
-	
+
 	-- register this module with TSM
 	TSM:RegisterModule()
 
@@ -158,7 +158,7 @@ function TSM:GetTooltip(itemString)
 	itemString = TSMAPI:GetBaseItemString(itemString, true)
 	local operations = TSMAPI:GetItemOperation(itemString, "Auctioning")
 	if not operations or not operations[1] or not TSM.operations[operations[1]] then return end
-	
+
 	TSMAPI:UpdateOperation("Auctioning", operations[1])
 	local prices = TSM.Util:GetItemPrices(TSM.operations[operations[1]], itemString)
 	if prices then
@@ -181,11 +181,12 @@ function TSM:GetTooltip(itemString)
 	end
 end
 
-function TSM:GetAuctionPlayer(player, player_full)
-	local realm = GetRealmName() or ""
+function TSM:GetAuctionPlayer(player)
+	[[local realm = GetRealmName() or ""
 	if player_full and strjoin("-", player, realm) ~= player_full then
 		return player_full
 	else
 		return player
-	end
+    end]]
+    return player or "none"
 end

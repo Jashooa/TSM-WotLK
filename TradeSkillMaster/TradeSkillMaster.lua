@@ -693,13 +693,14 @@ function TSMAPI:GetChatFrame()
 	return chatFrame
 end
 
-function TSM:GetAuctionPlayer(player, player_full)
-	local realm = GetRealmName() or ""
+function TSM:GetAuctionPlayer(player)
+	[[local realm = GetRealmName() or ""
 	if player_full and strjoin("-", player, realm) ~= player_full then
 		return player_full
 	else
 		return player
-	end
+    end]]
+    return player or "none"
 end
 
 function TSM:ScanBMAH()
