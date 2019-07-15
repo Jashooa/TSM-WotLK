@@ -65,7 +65,6 @@ function TSMAPI:GetBaseItemString(itemString, doGroupLookup)
 end
 
 local itemInfoCache = {}
-local PET_CAGE_ITEM_INFO = {isDefault=true, 0, "Battle Pets", "", 1, "", "", 0}
 function TSMAPI:GetSafeItemInfo(link)
 	if type(link) ~= "string" then return end
 

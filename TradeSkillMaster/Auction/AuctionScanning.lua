@@ -507,7 +507,7 @@ function TSMAPI.AuctionScan:FindAuction(callback, targetInfo, useCache)
 		findPrivate.page = floor((cacheIndex - 1) / 50)
 		findPrivate.query = scanCache[targetInfo.itemString].query
 	else
-		local name, _, rarity, _, minLevel, class, subClass = TSMAPI:GetSafeItemInfo(targetInfo.itemString)
+		local name, _, rarity, _, minLevel, class, subClass = TSMAPI:GetSafeItemInfo(targetInfo.itemString:match("item:%d+:%d+:%d+:%d+:%d+"))
 		findPrivate.query = { name = name, minLevel = minLevel, maxLevel = minLevel, class = class, subClass = subClass, rarity = rarity }
 		findPrivate.page = 0
 	end
