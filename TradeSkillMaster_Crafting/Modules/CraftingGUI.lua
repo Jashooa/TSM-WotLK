@@ -70,7 +70,10 @@ end
 
 -- Helper function to find spellID associated to spellname
 local function GetTradeSkillSpellID(spellName)
-	-- GetTradeSkillRecipeLink ONLY works when a trade skill window is open, but this should always happen
+    -- GetTradeSkillRecipeLink ONLY works when a trade skill window is open, but this should always happen
+    if spellName == "Smelting" then
+        spellName = "Mining"
+    end
 	for i = 1,GetNumTradeSkills() do
 		local link = GetTradeSkillRecipeLink(i)
 		if link and link:match(spellName) then -- Not a header and spell name found
@@ -80,7 +83,8 @@ local function GetTradeSkillSpellID(spellName)
 				return spellID
 			end
 		end
-	end
+    end
+    TSM:Printf("Could not find spellID for %s", spellName)
 	return nil
 end
 
@@ -255,9 +259,6 @@ function GUI:EventHandler(event, ...)
         --local unit, _, _, _, spellID = ...
         local unit, spellName = ...
         local spellID = GetTradeSkillSpellID(spellName)
-        if spellID == nil then
-            TSM:Printf("Could not find spellID for %s", spellName)
-        end
 		local craft = spellID and TSM.db.factionrealm.crafts[spellID]
 		if unit ~= "player" or not craft then return end
 
@@ -274,9 +275,6 @@ function GUI:EventHandler(event, ...)
 		--local unit, _, _, _, spellID = ...
         local unit, spellName = ...
         local spellID = GetTradeSkillSpellID(spellName)
-        if spellID == nil then
-            TSM:Printf("Could not find spellID for %s", spellName)
-        end
         if unit ~= "player" then return end
 		if GUI.isCrafting and spellID == GUI.isCrafting.spellID then
 			GUI.isCrafting.quantity = 0
@@ -822,7 +820,8 @@ function GUI:CreateProfessionsTab(parent)
 		local list = {}
 		for playerName, professionData in pairs(TSM.db.factionrealm.tradeSkills) do
 			for name, data in pairs(professionData) do
-				if not data.isSecondary and playerName == player then -- only display current player profs until blizz fix it
+                --if not data.isSecondary and playerName == player then -- only display current player profs until blizz fix it
+                if data.link then
 					list[playerName .. "~" .. name] = format("%s %d/%d - %s", name, data.level or "?", data.maxLevel or "?", playerName)
 				end
 			end
