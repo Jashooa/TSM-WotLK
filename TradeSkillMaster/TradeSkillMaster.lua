@@ -433,7 +433,7 @@ function TSM:GetTooltip(itemString, quantity)
 									local value = (matValue or 0) * deData.amountOfMats
 									local name, _, matQuality = TSMAPI:GetSafeItemInfo(item)
 									if matQuality then
-										local colorName = format("|c%s%s%s%s|r",select(4,GetItemQualityColor(matQuality)),name, " x ", deData.amountOfMats)
+                                        local colorName = format("%s%s%s%s|r",select(4,GetItemQualityColor(matQuality)),name, " x ", deData.amountOfMats)
 										if value > 0 then
 											if moneyCoinsTooltip then
 												tinsert(text, { left = "    " .. colorName, right = TSMAPI:FormatTextMoneyIcon(value, "|cffffffff", true) })
@@ -476,7 +476,7 @@ function TSM:GetTooltip(itemString, quantity)
 						local value = (TSM:GetCustomPrice(TSM.db.profile.destroyValueSource, targetItem) or 0) * herbs[itemString].rate
 						local name, _, matQuality = TSMAPI:GetSafeItemInfo(targetItem)
 						if matQuality then
-							local colorName = format("|c%s%s%s%s|r",select(4,GetItemQualityColor(matQuality)),name, " x ", herbs[itemString].rate)
+							local colorName = format("%s%s%s%s|r",select(4,GetItemQualityColor(matQuality)),name, " x ", herbs[itemString].rate)
 							if value > 0 then
 								if moneyCoinsTooltip then
 									tinsert(text, { left = "    " .. colorName, right = TSMAPI:FormatTextMoneyIcon(value, "|cffffffff", true) })
@@ -516,7 +516,7 @@ function TSM:GetTooltip(itemString, quantity)
 						local value = (TSM:GetCustomPrice(TSM.db.profile.destroyValueSource, targetItem) or 0) * gems[itemString].rate
 						local name, _, matQuality = TSMAPI:GetSafeItemInfo(targetItem)
 						if matQuality then
-							local colorName = format("|c%s%s%s%s|r",select(4,GetItemQualityColor(matQuality)),name, " x ", gems[itemString].rate)
+							local colorName = format("%s%s%s%s|r",select(4,GetItemQualityColor(matQuality)),name, " x ", gems[itemString].rate)
 							if value > 0 then
 								if moneyCoinsTooltip then
 									tinsert(text, { left = "    " .. colorName, right = TSMAPI:FormatTextMoneyIcon(value, "|cffffffff", true) })
