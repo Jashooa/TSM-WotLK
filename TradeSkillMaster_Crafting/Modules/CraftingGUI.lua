@@ -1413,7 +1413,7 @@ function GUI:UpdateProfessionsTabST()
 	local inventoryTotals = select(4, TSM.Inventory:GetTotals())
 	for i = 1, GetNumTradeSkills() do
         --local skillName, skillType, numAvailable, isExpanded, _, numSkillUps, _, showProgressBar, currentRank, maxRank = GetTradeSkillInfo(i)
-        local skillName, skillType, numAvailable, isExpanded, _, numSkillUps = GetTradeSkillInfo(i)
+        local skillName, skillType, numAvailable, isExpanded, _ = GetTradeSkillInfo(i)
 		if skillName then
 			local spellID = TSM.Util:GetSpellID(i)
 			local key = skillName .. i
@@ -1424,11 +1424,7 @@ function GUI:UpdateProfessionsTabST()
 			end
 			if skillType == "header" or skillType == "subheader" then
 				skillName = skillName .. (isExpanded and " [-]" or " [+]")
-			end
-
-			if numSkillUps > 1 and skillType == "optimal" then
-				skillName = skillName .. " <" .. numSkillUps .. ">"
-			end
+            end
 
 			if not numAvailableAllCache[spellID] then
 				local numAvailableAll = math.huge
