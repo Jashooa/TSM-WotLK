@@ -700,7 +700,7 @@ function TSM:GetAuctionPlayer(player)
 	else
 		return player
     end]]--
-    return player or "none"
+    return player or "?"
 end
 
 function TSM:ScanBMAH()
