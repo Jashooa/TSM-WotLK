@@ -75,11 +75,11 @@ local function ParsePriceString(str, badPriceSource)
 	end
 
 	local origStr = str
-	
+
 	-- make everything lower case
 	str = strlower(str)
-	
-	
+
+
 	-- remove any colors around gold/silver/copper
 	str = gsub(str, "|cff([0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])g|r", "g")
 	str = gsub(str, "|cff([0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])s|r", "s")
@@ -126,10 +126,6 @@ local function ParsePriceString(str, badPriceSource)
 			local s, e = strfind(convertParams, "item:([0-9]+):?([0-9]*):?([0-9]*):?([0-9]*):?([0-9]*):?([0-9]*):?([0-9]*)")
 			convertItem = strsub(convertParams, s, e)
 			source = strsub(convertParams, 1, s - 1)
-		elseif strfind(convertParams, "battlepet:") then
-			local s, e = strfind(convertParams, "item:([0-9]+):?([0-9]*):?([0-9]*):?([0-9]*):?([0-9]*):?([0-9]*):?([0-9]*)")
-			convertItem = strsub(convertParams, s, e)
-			source = strsub(convertParams, 1, s - 1)
 		else
 			source = convertParams
 		end
@@ -167,8 +163,6 @@ local function ParsePriceString(str, badPriceSource)
 		local s, e
 		if strfind(str, "item:") then
 			s, e = strfind(str, "item:([0-9]+):?([0-9]*):?([0-9]*):?([0-9]*):?([0-9]*):?([0-9]*):?([0-9]*)")
-		elseif strfind(str, "battlepet:") then
-			s, e = strfind(str, "battlepet:([0-9]+):?([0-9]*):?([0-9]*):?([0-9]*):?([0-9]*):?([0-9]*):?([0-9]*)")
 		else
 			break
 		end
@@ -203,7 +197,7 @@ local function ParsePriceString(str, badPriceSource)
 			str = gsub(str, leading..pctValue.."%%", leading .. number .. " *")
 		end
 	end
-	
+
 	-- create array of valid price sources
 	local priceSourceKeys = {}
 	for key in pairs(TSMAPI:GetPriceSources()) do
@@ -273,7 +267,7 @@ local function ParsePriceString(str, badPriceSource)
 			str = gsub(str, match, "(\"_item\",\"" .. key .. "\",\"reg\")")
 		end
 	end
-	
+
 	for key in pairs(TSM.db.global.customPriceSources) do
 		-- price sources need to have at least 1 capital letter for this algorithm to work, so temporarily give it one
 		key = strupper(strsub(key, 1, 1))..strsub(key, 2)
@@ -287,7 +281,7 @@ local function ParsePriceString(str, badPriceSource)
 			match = match:trim()
 			str = gsub(str, match, "(\"_item\",\"" .. key .. "\",\"custom\")")
 		end
-		
+
 		-- change custom price sources back to lower case
 		str = gsub(str, TSMAPI:StrEscape("(\"~item~\",\"" .. key .. "\",\"custom\")"), strlower("(\"~item~\",\"" .. key .. "\",\"custom\")"))
 		str = gsub(str, TSMAPI:StrEscape("(\"_item\",\"" .. key .. "\",\"custom\")"), strlower("(\"_item\",\"" .. key .. "\",\"custom\")"))
@@ -318,7 +312,7 @@ local function ParsePriceString(str, badPriceSource)
 	for word, funcName in pairs(MATH_FUNCTIONS) do
 		str = gsub(str, word, funcName)
 	end
-	
+
 	-- remove any unused values
 	for i in ipairs(itemValues) do
 		if not strfind(" "..str.." ", " values%["..i.."%] ") then

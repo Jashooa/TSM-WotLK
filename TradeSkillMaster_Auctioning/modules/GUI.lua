@@ -18,7 +18,7 @@ function private:CreateButtons(parent)
 	frame:SetHeight(height)
 	frame:SetWidth(210)
 	frame:SetPoint("BOTTOMRIGHT", -92, 5)
-	
+
 	frame.Enable = function(self)
 		if private.mode == "Post" then
 			self.post:Enable()
@@ -28,7 +28,7 @@ function private:CreateButtons(parent)
 		self.skip:Enable()
 		self.stop:Enable()
 	end
-	
+
 	frame.Disable = function(self)
 		if private.mode == "Post" then
 			self.post:Disable()
@@ -37,7 +37,7 @@ function private:CreateButtons(parent)
 		end
 		self.skip:Disable()
 	end
-	
+
 	frame.UpdateMode = function(self)
 		if private.mode == "Post" then
 			self.post:Show()
@@ -50,7 +50,7 @@ function private:CreateButtons(parent)
 		end
 		self.stop:Enable()
 	end
-	
+
 	local function OnClick(self)
 		if self.which == "stop" and self.isDone then
 			GUI:HideSelectionFrame()
@@ -59,7 +59,7 @@ function private:CreateButtons(parent)
 			private:OnAction(self.which)
 		end
 	end
-	
+
 	local button = TSMAPI.GUI:CreateButton(frame, 22, "TSMAuctioningPostButton")
 	button:SetPoint("TOPLEFT")
 	button:SetWidth(80)
@@ -68,7 +68,7 @@ function private:CreateButtons(parent)
 	button.which = "action"
 	button:SetScript("OnClick", OnClick)
 	frame.post = button
-	
+
 	local button = TSMAPI.GUI:CreateButton(frame, 22, "TSMAuctioningCancelButton")
 	button:SetPoint("TOPLEFT")
 	button:SetWidth(80)
@@ -77,7 +77,7 @@ function private:CreateButtons(parent)
 	button.which = "action"
 	button:SetScript("OnClick", OnClick)
 	frame.cancel = button
-	
+
 	local button = TSMAPI.GUI:CreateButton(frame, 18)
 	button:SetPoint("TOPLEFT", frame.post, "TOPRIGHT", 5, 0)
 	button:SetWidth(60)
@@ -86,7 +86,7 @@ function private:CreateButtons(parent)
 	button.which = "skip"
 	button:SetScript("OnClick", OnClick)
 	frame.skip = button
-	
+
 	local button = TSMAPI.GUI:CreateButton(frame, 18)
 	button:SetPoint("TOPLEFT", frame.skip, "TOPRIGHT", 5, 0)
 	button:SetWidth(70)
@@ -95,14 +95,14 @@ function private:CreateButtons(parent)
 	button.which = "stop"
 	button:SetScript("OnClick", OnClick)
 	frame.stop = button
-	
+
 	return frame
 end
 
 function private:CreateContentButtons(parent)
 	local frame = CreateFrame("Frame", nil, parent)
 	frame:SetAllPoints(parent)
-	
+
 	frame.UpdateMode = function(self)
 		if private.mode == "Post" then
 			self.currAuctionsButton:Show()
@@ -113,19 +113,19 @@ function private:CreateContentButtons(parent)
 			self.editPriceButton:Hide()
 		end
 	end
-	
+
 	frame.UnlockHighlight = function(self)
 		self.auctionsButton:UnlockHighlight()
 		self.logButton:UnlockHighlight()
 		self.currAuctionsButton:UnlockHighlight()
 		self.editPriceButton:UnlockHighlight()
 	end
-	
+
 	local function OnClick(self)
 		frame:UnlockHighlight()
 		self:LockHighlight()
 		frame.editPriceFrame:Hide()
-		
+
 		if self.which == "log" then
 			private.auctionsST:Hide()
 			private.logST:Show()
@@ -153,7 +153,7 @@ function private:CreateContentButtons(parent)
 	auctionsButton:SetScript("OnClick", OnClick)
 	auctionsButton:SetText(L["Show All Auctions"])
 	frame.auctionsButton = auctionsButton
-	
+
 	local currAuctionsButton = TSMAPI.GUI:CreateButton(frame, 16)
 	currAuctionsButton:SetPoint("TOPRIGHT", -170, -20)
 	currAuctionsButton:SetHeight(17)
@@ -162,7 +162,7 @@ function private:CreateContentButtons(parent)
 	currAuctionsButton:SetScript("OnClick", OnClick)
 	currAuctionsButton:SetText(L["Show Item Auctions"])
 	frame.currAuctionsButton = currAuctionsButton
-	
+
 	local logButton = TSMAPI.GUI:CreateButton(frame, 16)
 	logButton:SetPoint("TOPRIGHT", -10, -45)
 	logButton:SetHeight(17)
@@ -171,7 +171,7 @@ function private:CreateContentButtons(parent)
 	logButton:SetScript("OnClick", OnClick)
 	logButton:SetText(L["Show Log"])
 	frame.logButton = logButton
-	
+
 	local editPriceButton = TSMAPI.GUI:CreateButton(frame, 16)
 	editPriceButton:SetPoint("TOPRIGHT", -170, -45)
 	editPriceButton:SetHeight(17)
@@ -180,7 +180,7 @@ function private:CreateContentButtons(parent)
 	editPriceButton:SetScript("OnClick", OnClick)
 	editPriceButton:SetText(L["Edit Post Price"])
 	frame.editPriceButton = editPriceButton
-	
+
 	local editPriceFrame = CreateFrame("Frame", nil, frame)
 	TSMAPI.Design:SetFrameBackdropColor(editPriceFrame)
 	editPriceFrame:SetPoint("CENTER")
@@ -199,30 +199,30 @@ function private:CreateContentButtons(parent)
 			end
 		end)
 	frame.editPriceFrame = editPriceFrame
-	
+
 	local linkLabel = TSMAPI.GUI:CreateLabel(editPriceFrame)
 	linkLabel:SetPoint("TOP", 0, -14)
 	linkLabel:SetJustifyH("CENTER")
 	linkLabel:SetText("")
 	editPriceFrame.linkLabel = linkLabel
-	
+
 	local bg = editPriceFrame:CreateTexture(nil, "BACKGROUND")
 	bg:SetPoint("TOPLEFT", linkLabel, -2, 2)
 	bg:SetPoint("BOTTOMRIGHT", linkLabel, 2, -2)
 	TSMAPI.Design:SetContentColor(bg)
 	linkLabel.bg = bg
-	
+
 	local priceBoxLabel = TSMAPI.GUI:CreateLabel(editPriceFrame)
 	priceBoxLabel:SetPoint("TOPLEFT", 14, -40)
 	priceBoxLabel:SetText(L["Auction Buyout (Stack Price):"])
 	editPriceFrame.priceBoxLabel = priceBoxLabel
-	
+
 	local priceBox = CreateFrame("Frame", "TSMPostPriceChangeBox", editPriceFrame, "MoneyInputFrameTemplate")
 	priceBox:SetPoint("TOPLEFT", 20, -60)
 	priceBox:SetHeight(20)
 	priceBox:SetWidth(120)
 	editPriceFrame.priceBox = priceBox
-	
+
 	local saveButton = TSMAPI.GUI:CreateButton(editPriceFrame, 16)
 	saveButton:SetPoint("BOTTOMLEFT", 10, 10)
 	saveButton:SetPoint("BOTTOMRIGHT", editPriceFrame, "BOTTOM", -2, 10)
@@ -233,7 +233,7 @@ function private:CreateContentButtons(parent)
 		end)
 	saveButton:SetText(L["Save New Price"])
 	editPriceFrame.saveButton = saveButton
-	
+
 	local cancelButton = TSMAPI.GUI:CreateButton(editPriceFrame, 16)
 	cancelButton:SetPoint("BOTTOMLEFT", editPriceFrame, "BOTTOM", 2, 10)
 	cancelButton:SetPoint("BOTTOMRIGHT", -10, 10)
@@ -243,14 +243,14 @@ function private:CreateContentButtons(parent)
 		end)
 	cancelButton:SetText(L["Cancel"])
 	editPriceFrame.cancelButton = cancelButton
-	
+
 	return frame
 end
 
 function private:CreateInfoText(parent)
 	local frame = CreateFrame("Frame", nil, parent)
 	frame:SetAllPoints()
-	
+
 	frame.SetInfo = function(self, info)
 		private:UpdateLogSTHighlight()
 		if type(info) == "string" then
@@ -262,7 +262,7 @@ function private:CreateInfoText(parent)
 			self.buyoutText:Hide()
 			self.quantityText:Hide()
 			self.statusText:Show()
-			
+
 			local status, _, gold, gold2 = ("\n"):split(info)
 			if gold then
 				self.goldText:Show()
@@ -284,12 +284,12 @@ function private:CreateInfoText(parent)
 			self.statusText:Hide()
 			self.goldText:Hide()
 			self.goldText2:Hide()
-			
+
 			local itemID = TSMAPI:GetItemID(info.itemString)
 			local total = TSM.Reset:GetTotalQuantity(info.itemString)
 			self.quantityText:Show()
 			self.quantityText:SetText(TSMAPI.Design:GetInlineColor("link")..L["Currently Owned:"].."|r "..total)
-			
+
 			local _,link,_,_,_,_,_,_,_,texture = TSMAPI:GetSafeItemInfo(info.itemString)
 			self.linkText:SetText(link)
 			if self.linkText:GetStringWidth() > 200 then
@@ -313,7 +313,7 @@ function private:CreateInfoText(parent)
 			self.quantityText:Hide()
 			self.goldText:Hide()
 			self.goldText2:Hide()
-		
+
 			local _,link,_,_,_,_,_,_,_,texture = TSMAPI:GetSafeItemInfo(info.itemString)
 			self.linkText:SetText(link)
 			if self.linkText:GetStringWidth() > 200 then
@@ -323,23 +323,23 @@ function private:CreateInfoText(parent)
 			end
 			self.icon.link = link
 			self.icon:GetNormalTexture():SetTexture(texture)
-			
+
 			local sText = format("%s "..TSMAPI.Design:GetInlineColor("link")..L["auctions of|r %s"], info.numStacks, info.stackSize)
 			self.stackText:SetText(sText)
-			
+
 			self.bidText:SetText(TSMAPI.Design:GetInlineColor("link")..BID..":|r "..TSMAPI:FormatTextMoneyIcon(info.bid))
 			self.buyoutText:SetText(TSMAPI.Design:GetInlineColor("link")..BUYOUT..":|r "..TSMAPI:FormatTextMoneyIcon(info.buyout))
 
 			private.contentButtons.editPriceButton:Enable()
 			private.contentButtons.editPriceFrame.itemString = info.itemString
 			private.contentButtons.editPriceFrame.info = {itemString=info.itemString, link=link, buyout=info.buyout, operation=info.operation}
-			
+
 			TSMAPI:CreateTimeDelay("AuctioningLogHLDelay", 0.01, function() private:UpdateLogSTHighlight(info) end)
 		end
 	end
-	
+
 	frame.UpdateMode = function(self) end
-	
+
 	local icon = CreateFrame("Button", nil, frame)
 	icon:SetPoint("TOPLEFT", 85, -20)
 	icon:SetWidth(50)
@@ -355,7 +355,6 @@ function private:CreateInfoText(parent)
 		end
 	end)
 	icon:SetScript("OnLeave", function()
-		BattlePetTooltip:Hide()
 		GameTooltip:ClearLines()
 		GameTooltip:Hide()
 	end)
@@ -365,19 +364,19 @@ function private:CreateInfoText(parent)
 		end
 	end)
 	frame.icon = icon
-	
+
 	local linkText = TSMAPI.GUI:CreateLabel(frame)
 	linkText:SetPoint("LEFT", icon, "RIGHT", 4, 0)
 	linkText:SetJustifyH("LEFT")
 	linkText:SetJustifyV("CENTER")
 	frame.linkText = linkText
-	
+
 	local bg = frame:CreateTexture(nil, "BACKGROUND")
 	bg:SetPoint("TOPLEFT", linkText, -2, 2)
 	bg:SetPoint("BOTTOMRIGHT", linkText, 2, -2)
 	TSMAPI.Design:SetContentColor(bg)
 	linkText.bg = bg
-	
+
 	local stackText = TSMAPI.GUI:CreateLabel(frame)
 	stackText:SetPoint("TOPLEFT", 350, -18)
 	stackText:SetWidth(175)
@@ -385,7 +384,7 @@ function private:CreateInfoText(parent)
 	stackText:SetJustifyH("LEFT")
 	stackText:SetJustifyV("CENTER")
 	frame.stackText = stackText
-	
+
 	local bidText = TSMAPI.GUI:CreateLabel(frame)
 	bidText:SetPoint("TOPLEFT", 350, -38)
 	bidText:SetWidth(175)
@@ -393,7 +392,7 @@ function private:CreateInfoText(parent)
 	bidText:SetJustifyH("LEFT")
 	bidText:SetJustifyV("CENTER")
 	frame.bidText = bidText
-	
+
 	local buyoutText = TSMAPI.GUI:CreateLabel(frame)
 	buyoutText:SetPoint("TOPLEFT", 350, -58)
 	buyoutText:SetWidth(175)
@@ -401,25 +400,25 @@ function private:CreateInfoText(parent)
 	buyoutText:SetJustifyH("LEFT")
 	buyoutText:SetJustifyV("CENTER")
 	frame.buyoutText = buyoutText
-	
+
 	local statusText = TSMAPI.GUI:CreateLabel(frame)
 	statusText:SetPoint("TOP", frame, "TOPLEFT", 300, -15)
 	statusText:SetJustifyH("CENTER")
 	statusText:SetJustifyV("CENTER")
 	frame.statusText = statusText
-	
+
 	local goldText = TSMAPI.GUI:CreateLabel(frame)
 	goldText:SetPoint("TOP", statusText, "BOTTOM", 0, -15)
 	goldText:SetJustifyH("CENTER")
 	goldText:SetJustifyV("CENTER")
 	frame.goldText = goldText
-	
+
 	local goldText2 = TSMAPI.GUI:CreateLabel(frame)
 	goldText2:SetPoint("TOP", goldText, "BOTTOM")
 	goldText2:SetJustifyH("CENTER")
 	goldText2:SetJustifyV("CENTER")
 	frame.goldText2 = goldText2
-	
+
 	local quantityText = TSMAPI.GUI:CreateLabel(frame)
 	quantityText:SetPoint("TOPLEFT", 535, -58)
 	quantityText:SetWidth(175)
@@ -427,7 +426,7 @@ function private:CreateInfoText(parent)
 	quantityText:SetJustifyH("LEFT")
 	quantityText:SetJustifyV("CENTER")
 	frame.quantityText = quantityText
-	
+
 	return frame
 end
 
@@ -439,12 +438,12 @@ function private:CreateAuctionsST(parent)
 		OnClick = function(_, data, self, button)
 		end,
 	}
-	
+
 	local rt = TSMAPI:CreateAuctionResultsTable(frame, handlers)
 	rt:SetData({})
 	rt:SetSort(7, true)
 	rt:Hide()
-	
+
 	return rt
 end
 
@@ -456,7 +455,7 @@ function private:CreateLogST(parent)
 			return L["Lowest Buyout"]
 		end
 	end
-	
+
 	local stCols = {
 		{
 			name = L["Item"],
@@ -487,12 +486,12 @@ function private:CreateLogST(parent)
 			width = 0,
 		},
 	}
-	
+
 	local handlers = {
 		OnEnter = function(_, data, self)
 			if not data.operation then return end
 			local prices = TSM.Util:GetItemPrices(data.operation, data.itemString)
-			
+
 			GameTooltip:SetOwner(self, "ANCHOR_NONE")
 			GameTooltip:SetPoint("BOTTOMLEFT", self, "TOPLEFT")
 			GameTooltip:AddLine(data.link)
@@ -538,7 +537,7 @@ function private:CreateLogST(parent)
 			end
 		end,
 	}
-	
+
 	local st = TSMAPI:CreateScrollingTable(parent, stCols, handlers)
 	st:SetParent(parent)
 	st:SetAllPoints()
@@ -568,7 +567,7 @@ function private:UpdateAuctionsSTData()
 			tinsert(results, auction)
 		end
 	end
-	
+
 	private.auctionsST:SetData(results)
 end
 
@@ -576,7 +575,7 @@ function private:GetLogSTRow(record, recordIndex)
 	if private.logST.cache[record] then
 		return private.logST.cache[record]
 	end
-	
+
 	local name, link = TSMAPI:GetSafeItemInfo(record.itemString)
 	local buyout, seller, isWhitelist, isPlayer, lowestBuyout, _
 	if record.reason ~= "cancelAll" then
@@ -586,7 +585,7 @@ function private:GetLogSTRow(record, recordIndex)
 			buyout = record.buyout
 		end
 	end
-	
+
 	local sellerText
 	if seller then
 		if isPlayer then
@@ -599,10 +598,10 @@ function private:GetLogSTRow(record, recordIndex)
 	else
 		sellerText = "|cffffffff---|r"
 	end
-	
+
 	local color = TSM.Log:GetColor(record.mode, record.reason)
 	local infoText = (color or "|cffffffff")..(record.info or "---").."|r"
-	
+
 	local row = {
 		cols = {
 			{
@@ -638,7 +637,7 @@ function private:GetLogSTRow(record, recordIndex)
 		seller = seller,
 		info = infoText,
 	}
-	
+
 	private.logST.cache[record] = row
 	return row
 end
@@ -649,7 +648,7 @@ function private:UpdateLogSTData()
 		tinsert(rows, private:GetLogSTRow(record, i))
 	end
 	private.logST:SetData(rows)
-	
+
 	if #private.logST.rowData > private.logST.NUM_ROWS then
 		TSMAPI:CreateTimeDelay("logSTOffset", 0.08, function()
 				private.logST:SetScrollOffset(#private.logST.rowData - private.logST.NUM_ROWS)
@@ -659,7 +658,7 @@ end
 
 function private:UpdateLogSTHighlight(currentItem)
 	if not currentItem then return private.logST:SetHighlighted() end
-	
+
 	for i=1, #private.logST.rowData do
 		local data = private.logST.rowData[i]
 		if data and data.operation == currentItem.operation and data.itemString == currentItem.itemString then
@@ -684,7 +683,7 @@ function private:Stopped(notDone)
 	private.buttons:Disable(true)
 	private.statusBar:UpdateStatus(100, 100)
 	private.contentButtons.currAuctionsButton:Hide()
-	
+
 	if private.mode == "Post" then
 		TSMAPI:CreateTimeDelay(0.5, SetGoldText)
 		SetGoldText()
@@ -713,14 +712,14 @@ function GUI:CreateSelectionFrame(parent)
 	stContainer:SetPoint("BOTTOMRIGHT", -200, 30)
 	TSMAPI.Design:SetFrameColor(stContainer)
 	frame.groupTree = TSMAPI:CreateGroupTree(stContainer, "Auctioning", "Auctioning_AH")
-	
+
 	local helpText = TSMAPI.GUI:CreateLabel(frame)
 	helpText:SetPoint("TOP", stContainer, 0, 20)
 	helpText:SetJustifyH("CENTER")
 	helpText:SetJustifyV("CENTER")
 	helpText:SetText(L["Select the groups which you would like to include in the scan."])
 	frame.helpText = helpText
-	
+
 	local btnWidth = floor((stContainer:GetWidth() - 10)/3)
 	local postBtn = TSMAPI.GUI:CreateButton(frame, 16)
 	postBtn:SetPoint("BOTTOMLEFT", 5, 5)
@@ -733,7 +732,7 @@ function GUI:CreateSelectionFrame(parent)
 			GUI:StartScan(parent)
 		end)
 	frame.postBtn = postBtn
-	
+
 	local cancelBtn = TSMAPI.GUI:CreateButton(frame, 16)
 	cancelBtn:SetPoint("BOTTOMLEFT", postBtn, "BOTTOMRIGHT", 5, 0)
 	cancelBtn:SetHeight(20)
@@ -745,7 +744,7 @@ function GUI:CreateSelectionFrame(parent)
 			GUI:StartScan(parent)
 		end)
 	frame.cancelBtn = cancelBtn
-	
+
 	local resetBtn = TSMAPI.GUI:CreateButton(frame, 16)
 	resetBtn:SetPoint("BOTTOMLEFT", cancelBtn, "BOTTOMRIGHT", 5, 0)
 	resetBtn:SetHeight(20)
@@ -757,22 +756,22 @@ function GUI:CreateSelectionFrame(parent)
 			GUI:StartScan(parent)
 		end)
 	frame.resetBtn = resetBtn
-	
+
 	local customScanFrame = CreateFrame("Frame", nil, frame)
 	customScanFrame:SetPoint("TOPLEFT", stContainer:GetWidth() + 10, 0)
 	customScanFrame:SetPoint("BOTTOMRIGHT")
 	TSMAPI.Design:SetFrameColor(customScanFrame)
 	private.customScanFrame = customScanFrame
-	
+
 	local title = TSMAPI.GUI:CreateLabel(customScanFrame)
 	title:SetPoint("TOP", 0, -2)
 	title:SetJustifyH("CENTER")
 	title:SetJustifyV("CENTER")
 	title:SetText(L["Other Auctioning Searches"])
 	customScanFrame.title = title
-	
+
 	TSMAPI.GUI:CreateHorizontalLine(customScanFrame, -20)
-	
+
 	local cancelAllBtn = TSMAPI.GUI:CreateButton(customScanFrame, 16)
 	cancelAllBtn:SetPoint("TOPLEFT", 4, -24)
 	cancelAllBtn:SetPoint("TOPRIGHT", -4, -24)
@@ -785,9 +784,9 @@ function GUI:CreateSelectionFrame(parent)
 		end)
 	cancelAllBtn.tooltip = L["Will cancel all your auctions, including ones which you didn't post with Auctioning."]
 	customScanFrame.cancelAllBtn = cancelAllBtn
-	
+
 	TSMAPI.GUI:CreateHorizontalLine(customScanFrame, -48)
-	
+
 	local cancelFilterText = TSMAPI.GUI:CreateLabel(customScanFrame, "small")
 	cancelFilterText:SetPoint("TOPLEFT", 4, -52)
 	cancelFilterText:SetPoint("TOPRIGHT", -4, -52)
@@ -795,13 +794,13 @@ function GUI:CreateSelectionFrame(parent)
 	cancelFilterText:SetJustifyV("CENTER")
 	cancelFilterText:SetText(L["Cancel Filter:"])
 	customScanFrame.cancelFilterText = cancelFilterText
-	
+
 	local filterEditBox = TSMAPI.GUI:CreateInputBox(customScanFrame, "TSMAuctioningFilterSearchEditbox")
 	filterEditBox:SetPoint("TOPLEFT", 4, -72)
 	filterEditBox:SetPoint("TOPRIGHT", -4, -72)
 	filterEditBox:SetHeight(20)
 	customScanFrame.filterEditBox = filterEditBox
-	
+
 	local cancelFilterBtn = TSMAPI.GUI:CreateButton(customScanFrame, 16)
 	cancelFilterBtn:SetPoint("TOPLEFT", 4, -96)
 	cancelFilterBtn:SetPoint("TOPRIGHT", -4, -96)
@@ -816,9 +815,9 @@ function GUI:CreateSelectionFrame(parent)
 		end)
 	cancelFilterBtn.tooltip = L["Will cancel all your auctions which match the specified filter, including ones which you didn't post with Auctioning."]
 	customScanFrame.cancelFilterBtn = cancelFilterBtn
-	
+
 	TSMAPI.GUI:CreateHorizontalLine(customScanFrame, -120)
-	
+
 	local durationList = {}
 	local durationText = {L["Under 30min"], L["30min to 2hrs"], L["2 to 12 hrs"]}
 	for i=1, 3 do -- go up to long duration
@@ -830,7 +829,7 @@ function GUI:CreateSelectionFrame(parent)
 	cancelDurationDropdown:SetHeight(20)
 	cancelDurationDropdown:SetLabel(L["Low Duration"])
 	cancelDurationDropdown:SetValue(1)
-	
+
 	local cancelDurationBtn = TSMAPI.GUI:CreateButton(customScanFrame, 16)
 	cancelDurationBtn:SetPoint("TOPLEFT", 4, -172)
 	cancelDurationBtn:SetPoint("TOPRIGHT", -4, -172)
@@ -843,9 +842,9 @@ function GUI:CreateSelectionFrame(parent)
 		end)
 	cancelDurationBtn.tooltip = L["Will cancel all your auctions at or below the specified duration, including ones you didn't post with Auctioning."]
 	customScanFrame.cancelDurationBtn = cancelDurationBtn
-	
+
 	TSMAPI.GUI:CreateHorizontalLine(customScanFrame, -196)
-	
+
 	return frame
 end
 
@@ -856,22 +855,22 @@ function GUI:CreateScanFrame(parent)
 	contentFrame:SetAllPoints(parent.content)
 	TSMAPI.Design:SetFrameColor(contentFrame)
 	frame.content = contentFrame
-	
+
 	local statusBarFrame = CreateFrame("Frame", nil, frame.content)
 	statusBarFrame:SetPoint("TOPLEFT", frame.content, "BOTTOMLEFT", 165, -2)
 	statusBarFrame:SetWidth(355)
 	statusBarFrame:SetHeight(30)
 	private.statusBar = TSMAPI.GUI:CreateStatusBar(statusBarFrame, "TSMAuctioningStatusBar")
-	
+
 	private.buttons = private:CreateButtons(frame)
-	
+
 	private.contentButtons = private.contentButtons or private:CreateContentButtons(frame)
 	private.contentButtons:Show()
 	private.contentButtons:UpdateMode()
-	
+
 	private.infoText = private.infoText or private:CreateInfoText(frame)
 	private.infoText:Show()
-	
+
 	private.auctionsST = private:CreateAuctionsST(frame.content)
 	private.logST = private:CreateLogST(frame.content)
 	return frame
@@ -894,7 +893,7 @@ function GUI:StartScan(frame)
 	private.auctionsST:SetData({})
 	private.logST:SetData({})
 	private.logST.cache = {}
-	
+
 	if private.mode == "Reset" then
 		private.buttons:Hide()
 		private.contentButtons:Hide()
@@ -902,8 +901,8 @@ function GUI:StartScan(frame)
 		private.logST:Hide()
 		TSM.Reset:Show(frame)
 	end
-	
-	
+
+
 	local options = {itemOperations={}}
 	if private.specialMode then
 		options.specialMode = private.specialMode
@@ -927,7 +926,7 @@ function GUI:StartScan(frame)
 			end
 		end
 	end
-	
+
 	TSMAPI:CreateTimeDelay("aucStartDelay", 0.1, function() TSM.Manage:StartScan(private, options) end)
 end
 

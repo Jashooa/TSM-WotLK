@@ -114,21 +114,21 @@ function private:CreateSearchBar(parent)
 			end
 		end
 	end
-	
+
 	local function OnEditFocusGained(self)
 		self:HighlightText()
 	end
-	
+
 	local function OnEditFocusLost(self)
 		self:HighlightText()
 	end
-	
+
 	local function OnUpdate(self)
 		if self:IsEnabled() and not TSMAPI:AHTabIsVisible("Shopping") then
 			self:ClearFocus()
 		end
 	end
-	
+
 	local function OnEnter(self)
 		GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
 		GameTooltip:SetMinimumWidth(400)
@@ -138,7 +138,7 @@ function private:CreateSearchBar(parent)
 		GameTooltip:Show()
 	end
 
-	
+
 	local searchBarFrame = CreateFrame("Frame", nil, parent)
 	searchBarFrame:SetAllPoints()
 	searchBarFrame:Hide()
@@ -156,7 +156,7 @@ function private:CreateSearchBar(parent)
 	eb:SetScript("OnLeave", function() GameTooltip:Hide() end)
 	eb:SetScript("OnUpdate", OnUpdate)
 	searchBarFrame.editBox = eb
-	
+
 	local btn = TSMAPI.GUI:CreateButton(searchBarFrame, 20)
 	btn:SetPoint("TOPLEFT", eb, "TOPRIGHT", 4, 0)
 	btn:SetPoint("BOTTOMLEFT", eb, "BOTTOMRIGHT", 4, 0)
@@ -164,7 +164,7 @@ function private:CreateSearchBar(parent)
 	btn:SetText(SEARCH)
 	btn:SetScript("OnClick", function() StartSearch(private.searchBar.editBox:GetText()) end)
 	searchBarFrame.button = btn
-	
+
 	local btn = TSMAPI.GUI:CreateButton(searchBarFrame, 16)
 	btn:SetPoint("TOPLEFT", searchBarFrame.button, "TOPRIGHT", 4, 0)
 	btn:SetPoint("BOTTOMLEFT", searchBarFrame.button, "BOTTOMRIGHT", 4, 0)
@@ -173,7 +173,7 @@ function private:CreateSearchBar(parent)
 	btn:Disable()
 	btn:SetScript("OnClick", function() TSM.Util:StopScan() searchBarFrame:Enable() end)
 	searchBarFrame.stop = btn
-	
+
 	local function OnModeChange(self)
 		searchBarFrame.normal:UnlockHighlight()
 		searchBarFrame.destroy:UnlockHighlight()
@@ -183,7 +183,7 @@ function private:CreateSearchBar(parent)
 			private:UpdateMode()
 		end
 	end
-	
+
 	local btn = TSMAPI.GUI:CreateButton(searchBarFrame, 14)
 	btn:SetPoint("TOPLEFT", eb, "BOTTOMLEFT", 0, -8)
 	btn:SetHeight(16)
@@ -193,7 +193,7 @@ function private:CreateSearchBar(parent)
 	btn.mode = "normal"
 	btn.tooltip = L["When in normal mode, you may run simple and filtered searches of the auction house."]
 	searchBarFrame.normal = btn
-	
+
 	local btn = TSMAPI.GUI:CreateButton(searchBarFrame, 14)
 	btn:SetPoint("TOPLEFT", searchBarFrame.normal, "BOTTOMLEFT", 0, -4)
 	btn:SetPoint("TOPRIGHT", searchBarFrame.normal, "BOTTOMRIGHT", 0, -4)
@@ -203,13 +203,13 @@ function private:CreateSearchBar(parent)
 	btn.mode = "destroy"
 	btn.tooltip = L["When in destroy mode, you simply enter a target item (ink/pigment, enchanting mat, gem, etc) into the search box to search for everything you can destroy to get that item."]
 	searchBarFrame.destroy = btn
-	
+
 	local line = TSMAPI.GUI:CreateHorizontalLine(searchBarFrame, 0)
 	line:ClearAllPoints()
 	line:SetHeight(4)
 	line:SetPoint("TOPLEFT", eb, "BOTTOMLEFT", 120, -7)
 	line:SetPoint("TOPRIGHT", 0, -34)
-	
+
 	local pagesLabel = TSMAPI.GUI:CreateLabel(searchBarFrame)
 	pagesLabel:SetPoint("TOPLEFT", eb, "BOTTOMLEFT", 125, -15)
 	pagesLabel:SetHeight(20)
@@ -217,7 +217,7 @@ function private:CreateSearchBar(parent)
 	pagesLabel:SetJustifyV("CENTER")
 	pagesLabel:SetText(L["Sidebar Pages:"])
 	pagesLabel:SetWidth(pagesLabel:GetWidth() + 5)
-	
+
 	local buttons = {}
 	local function OnClick(self)
 		self.isSelected = not self.isSelected
@@ -251,19 +251,19 @@ function private:CreateSearchBar(parent)
 		buttons[i] = btn
 	end
 	searchBarFrame.buttons = buttons
-	
+
 	local line = TSMAPI.GUI:CreateHorizontalLine(searchBarFrame, 0)
 	line:ClearAllPoints()
 	line:SetHeight(4)
 	line:SetPoint("TOPLEFT", eb, "BOTTOMLEFT", 120, -40)
 	line:SetPoint("TOPRIGHT", 0, -67)
-	
+
 	local line = TSMAPI.GUI:CreateVerticalLine(searchBarFrame, 0)
 	line:ClearAllPoints()
 	line:SetPoint("TOPLEFT", eb, "BOTTOMLEFT", 120, -7)
 	line:SetHeight(33)
 	line:SetWidth(4)
-	
+
 	searchBarFrame.Disable = function(self)
 		self.isDisabled = true
 		self.editBox:ClearFocus()
@@ -278,7 +278,7 @@ function private:CreateSearchBar(parent)
 		self.button:Enable()
 		self.stop:Disable()
 	end
-	
+
 	return searchBarFrame
 end
 
@@ -326,7 +326,7 @@ function Search:StartFilterSearch(filter, callback, isCrafting)
 	TSM.isCrafting = isCrafting
 	TSM.searchCallback = callback
 	filter = filter:trim()
-	if strfind(filter, "^item:([0-9]+):?([0-9]*):?([0-9]*):?([0-9]*):?([0-9]*):?([0-9]*):?%-?([0-9]*)$") or strfind(filter, "^battlepet:([0-9]+):?([0-9]*):?([0-9]*):?([0-9]*):?([0-9]*):?([0-9]*):?([0-9]*)$") then
+	if strfind(filter, "^item:([0-9]+):?([0-9]*):?([0-9]*):?([0-9]*):?([0-9]*):?([0-9]*):?%-?([0-9]*)$") then
 		filter = TSMAPI:GetSafeItemInfo(filter) or filter
 	end
 	if TSM.isCrafting then
@@ -431,9 +431,9 @@ end
 local function GetSearchFilterOptions(searchTerm)
 	local parts = {("/"):split(searchTerm)}
 	local queryString, class, subClass, minLevel, maxLevel, minILevel, maxILevel, rarity, usableOnly, exactOnly, evenOnly, maxQuantity, maxPrice, itemString
-	
+
 	if #parts == 1 then
-		if strfind(parts[1], "^item:([0-9]+):?([0-9]*):?([0-9]*):?([0-9]*):?([0-9]*):?([0-9]*):?%-?([0-9]*)$") or strfind(parts[1], "^battlepet:([0-9]+):?([0-9]*):?([0-9]*):?([0-9]*):?([0-9]*):?([0-9]*):?([0-9]*)$") then
+		if strfind(parts[1], "^item:([0-9]+):?([0-9]*):?([0-9]*):?([0-9]*):?([0-9]*):?([0-9]*):?%-?([0-9]*)$") then
 			itemString = parts[1]
 			queryString = TSMAPI:GetSafeItemInfo(itemString) or itemString
 			return true, queryString, 0, 0, 0, 0, 0, 0, 0, 0, nil, nil, 0, nil, itemString
@@ -443,10 +443,10 @@ local function GetSearchFilterOptions(searchTerm)
 	elseif #parts == 0 then
 		return false, L["Invalid Filter"]
 	end
-	
+
 	for i, str in ipairs(parts) do
 		str = str:trim()
-		
+
 		if tonumber(str) then
 			if not minLevel then
 				minLevel = tonumber(str)
@@ -508,7 +508,7 @@ local function GetSearchFilterOptions(searchTerm)
 		elseif TSMAPI:UnformatTextMoney(str) then
 			maxPrice = TSMAPI:UnformatTextMoney(str)
 		elseif i == 1 then
-			if strfind(str, "^item:([0-9]+):?([0-9]*):?([0-9]*):?([0-9]*):?([0-9]*):?([0-9]*):?%-?([0-9]*)$") or strfind(str, "^battlepet:([0-9]+):?([0-9]*):?([0-9]*):?([0-9]*):?([0-9]*):?([0-9]*):?([0-9]*)$") then
+			if strfind(str, "^item:([0-9]+):?([0-9]*):?([0-9]*):?([0-9]*):?([0-9]*):?([0-9]*):?%-?([0-9]*)$") then
 				itemString = str
 				queryString = TSMAPI:GetSafeItemInfo(str)
 			else
@@ -518,19 +518,19 @@ local function GetSearchFilterOptions(searchTerm)
 			return false, L["Unknown Filter"]
 		end
 	end
-	
+
 	if maxLevel and minLevel and maxLevel < minLevel then
 		local oldMaxLevel = maxLevel
 		maxLevel = minLevel
 		minLevel = oldMaxLevel
 	end
-	
+
 	if maxILevel and minILevel and maxILevel < minILevel then
 		local oldMaxILevel = maxILevel
 		maxILevel = minILevel
 		minILevel = oldMaxILevel
 	end
-	
+
 	return true, queryString or "", class or 0, subClass or 0, minLevel or 0, maxLevel or 0, minILevel or 0, maxILevel or 0, rarity or 0, usableOnly or 0, exactOnly or nil, evenOnly or nil, maxQuantity or 0, maxPrice, itemString
 end
 
@@ -539,7 +539,7 @@ function Search:GetFilters(searchQuery)
 	local filters = {}
 	local searchTerms = {(";"):split(searchQuery)}
 	filters.num = 0
-	
+
 	for i=1, #searchTerms do
 		local searchTerm = searchTerms[i]:trim()
 		if tonumber(searchTerm) then
@@ -560,7 +560,7 @@ function Search:GetFilters(searchQuery)
 			end
 		else
 			local isValid, queryString, class, subClass, minLevel, maxLevel, minILevel, maxILevel, rarity, usableOnly, exactOnly, evenOnly, maxQuantity, maxPrice, itemString = GetSearchFilterOptions(searchTerm)
-			
+
 			if not isValid then
 				TSM:Print(L["Skipped the following search term because it's invalid."])
 				TSM:Print("\""..searchTerm.."\": "..queryString)
@@ -569,7 +569,7 @@ function Search:GetFilters(searchQuery)
 				TSM:Print("\""..searchTerm.."\"")
 				isValid = nil
 			end
-		
+
 			if isValid then
 				filters.num = filters.num + 1
 				if filters.currentFilter then
@@ -586,7 +586,7 @@ function Search:GetFilters(searchQuery)
 			end
 		end
 	end
-	
+
 	return filters
 end
 

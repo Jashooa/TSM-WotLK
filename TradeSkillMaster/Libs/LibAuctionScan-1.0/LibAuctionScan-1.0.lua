@@ -24,20 +24,8 @@ end
 
 local function GetSafeItemInfo(link)
 	if type(link) ~= "string" then return end
-	
-	if strmatch(link, "battlepet:") then
-		local _, speciesID, level, quality, health, power, speed, petID = strsplit(":", link)
-		if not speciesID then return end
-		level, quality, health, power, speed, petID = level or 0, quality or 0, health or 0, power or 0, speed or 0, petID or "0"
-		
-		local name, texture = C_PetJournal.GetPetInfoBySpeciesID(speciesID)
-		level, quality = tonumber(level), tonumber(quality)
-		petID = strsub(petID, 1, (strfind(petID, "|") or #petID)-1)
-		link = ITEM_QUALITY_COLORS[quality].hex.."|Hbattlepet:"..speciesID..":"..level..":"..quality..":"..health..":"..power..":"..speed..":"..petID.."|h["..name.."]|h|r"
-		local minLvl, iType, _, stackSize, _, _, vendorPrice = select(5, GetItemInfo(82800))
-		local subType, equipLoc = 0, ""
-		return name, link, quality, level, minLvl, iType, subType, stackSize, equipLoc, texture, vendorPrice
-	elseif strmatch(link, "item:") then
+
+    if strmatch(link, "item:") then
 		return GetItemInfo(link)
 	end
 end
@@ -48,16 +36,16 @@ local BASE_DELAY = 0.10 -- time to delay for before trying to scan a page again 
 local function GetItemString(itemLink)
 	if type(itemLink) ~= "string" and type(itemLink) ~= "number" then return end
 	itemLink = select(2, GetSafeItemInfo(itemLink)) or itemLink
-	
+
 	-- it's an itemId and we couldn't get the itemLink so guess
 	if tonumber(itemLink) then
 		return "item:"..itemLink..":0:0:0:0:0:0"
 	end
-	
+
 	local itemInfo = {strfind(itemLink, "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%-?%d*):?(%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")}
 	if not itemInfo[11] then return end
 	itemInfo[11] = tonumber(itemInfo[11]) or 0
-	
+
 	return table.concat(itemInfo, ":", 4, 11)
 end
 
@@ -71,7 +59,7 @@ local function CancelFrame(label)
 			delayFrame = frame
 		end
 	end
-	
+
 	if delayFrame then
 		delayFrame:Hide()
 		delayFrame.label = nil
@@ -94,14 +82,14 @@ local function CreateTimeDelay(label, duration, callback)
 			frameNum = i
 		end
 	end
-	
+
 	if not frameNum then
 		local delay = CreateFrame("Frame")
 		delay:Hide()
 		tinsert(delays, delay)
 		frameNum = #delays
 	end
-	
+
 	local frame = delays[frameNum]
 	frame.inUse = true
 	frame.label = label
@@ -130,7 +118,7 @@ local function AuctionDataIsBad(temp, resolveSeller)
 			badData = true
 		end
 	end
-	
+
 	return badData
 end
 
@@ -162,7 +150,7 @@ do
 			frame:UnregisterEvent("AUCTION_ITEM_LIST_UPDATE")
 			if not status.isScanning then return end
 			CancelFrame("updateDelay")
-			
+
 			-- now that our query was successful, we can get our data
 			private:ScanAuctions()
 		end
@@ -211,7 +199,7 @@ do
 
 		QueryAuctionItems(filter.name, filter.minLevel, filter.maxLevel, filter.invType, filter.class, filter.subClass, 0, filter.usable, filter.quality)
 	end
-	
+
 	-- splits the combined filter into individual item filters
 	local function SplitCurrentFilterItems()
 		local newFilters = {}
@@ -231,7 +219,7 @@ do
 		status.filter = status.filterList[1]
 		DoCallback("UPDATE_TOTAL_FILTERS", #status.filterList)
 	end
-	
+
 	local function SortAuctionsAscending(header)
 		SortAuctionItems("list", header)
 		if IsAuctionSortReversed("list", header) then
@@ -241,32 +229,32 @@ do
 
 	local function IsDuplicatePage()
 		if not private.pageTemp or GetNumAuctionItems("list") == 0 then return false end
-		
+
 		local numLinks, prevLink = 0, nil
 		for i=1, GetNumAuctionItems("list") do
 			local _, _, count, _, _, _, _, minBid, minInc, buyout, bid, _, seller = GetAuctionItemInfo("list", i)
 			local link = GetAuctionItemLink("list", i)
 			local temp = private.pageTemp[i]
-			
+
 			if not prevLink then
 				prevLink = link
 			elseif prevLink ~= link then
 				prevLink = link
 				numLinks = numLinks + 1
 			end
-			
+
 			if not temp or temp.count ~= count or temp.minBid ~= minBid or temp.minInc ~= minInc or temp.buyout ~= buyout or temp.bid ~= bid or temp.seller ~= seller or temp.link ~= link then
 				return false
 			end
 		end
-		
+
 		if numLinks > 1 and private.pageTemp.shown == GetNumAuctionItems("list") then
 			return false
 		end
-		
+
 		return true
 	end
-	
+
 	local function PopulatePageTemp()
 		local shown = GetNumAuctionItems("list")
 		private.pageTemp = {numShown=shown}
@@ -276,11 +264,11 @@ do
 			-- if not, the data is bad and we'll wait / try again
 			local _, _, count, _, _, _, _, minBid, minInc, buyout, bid, _, seller = GetAuctionItemInfo("list", i)
 			local link = GetAuctionItemLink("list", i)
-			
+
 			private.pageTemp[i] = {count=count, minBid=minBid, minInc=minInc, buyout=buyout, bid=bid, seller=seller, link=link}
 		end
 	end
-	
+
 	-- Starts a scan of the auction house.
 	--		scanQueue - A list of queries. Each entry represents a unique set of QueryAuctionItem paramters:
 	--			name, minLevel, maxLevel, invType, class, subClass, usable, quality
@@ -345,11 +333,11 @@ do
 				tinsert(filterList, scanQueue[i])
 			end
 		end
-		
+
 		if #filterList == 0 then
 			return -2
 		end
-		
+
 		-- set defaults
 		scanOptions.maxRetries = scanOptions.maxRetries or 3
 		scanOptions.retryDelay = scanOptions.retryDelay or 2
@@ -401,16 +389,16 @@ do
 			CreateTimeDelay("queryDelay", 0.05, private.SendQuery)
 		end
 	end
-	
+
 	--scans the currently shown page of auctions and collects all the data
 	function private:ScanAuctions()
 		if not status.isScanning then return end
-		
+
 		local shown, total = GetNumAuctionItems("list")
 		local totalPages = math.ceil(total / 50)
 		local temp = {}
 		local dataIsBad = AuctionDataIsBad(temp, status.options.sellerResolution)
-		
+
 		-- check that we have good data
 		if dataIsBad or IsDuplicatePage() then
 			if status.retries < status.options.maxRetries then
@@ -444,18 +432,18 @@ do
 				return
 			end
 		end
-		
+
 		status.hardRetry = nil
 		status.retries = 0
 		status.timeDelay = 0
 		DoCallback("SCAN_STATUS_UPDATE", status.page+1, totalPages, #status.filterList)
 		PopulatePageTemp()
-		
+
 		-- now that we know our query is good, time to verify and then store our data
 		for _, v in ipairs(temp) do
 			private:AddAuctionRecord(v.index)
 		end
-		
+
 		-- This query has more pages to scan
 		-- increment the page # and send the new query
 		if totalPages > (status.page + 1) then
@@ -464,13 +452,13 @@ do
 			return
 		end
 
-		
+
 		DoCallback("QUERY_FINISHED", {filter=status.filter, data=status.data, left=#status.filterList})
-		
+
 		-- done with this filter so remove it
 		private:RemoveCurrentFilter()
 	end
-	
+
 	-- called when we are done with the current filter
 	function private:RemoveCurrentFilter()
 		-- Removes the current filter from the filterList as we are done scanning for that item
@@ -499,7 +487,7 @@ do
 		local timeLeft = GetAuctionItemTimeLeft("list", index)
 		local link = GetAuctionItemLink("list", index)
 		local itemString = GetItemString(link)
-		
+
 		if not itemString then return end
 		if status.filter.isItemIDFilter then
 			local stringType, itemID = (":"):split(itemString)
@@ -535,7 +523,7 @@ do
 
 		return true
 	end
-	
+
 	-- gets the current page progress
 	function lib:GetPageProgress()
 		local shown, total = GetNumAuctionItems("list")
@@ -549,15 +537,15 @@ do
 		lib:StopFindScan()
 		return private:StopScanning(true)
 	end
-	
-	
+
+
 	do
 		--[[-------------------------------------------------------------------------
 			GetAll Scan Code
 		---------------------------------------------------------------------------]]
 		local function GetAllScanFrameUpdate(self)
 			if not AuctionFrame:IsVisible() then self:Hide() end
-			
+
 			-- get data for at most 200 auctions per update to avoid excessive lag
 			for i=1, 200 do
 				local link = GetAuctionItemLink("list", self.num)
@@ -568,16 +556,16 @@ do
 					if link then
 						private:AddAuctionRecord(self.num)
 					end
-					
+
 					DoCallback("GETALL_UPDATE", self.num, self.numShown)
-					
+
 					-- check if we are done scanning or not
 					if self.num == self.numShown then
 						-- bug with getall scan only being able to return a max of 42554 auctions
 						if self.num ~= self.totalNum then
 							DoCallback("GETALL_BUG")
 						end
-						
+
 						self:Hide()
 						private:StopScanning()
 						break
@@ -600,9 +588,9 @@ do
 
 			self.delay = self.delay - elapsed
 			self.totalDelay = self.totalDelay - elapsed
-			
+
 			DoCallback("GETALL_WAITING", 20-self.totalDelay)
-			
+
 			if self.delay <= 0 then
 				if GetNumAuctionItems("list") > 50 then
 					-- data is ready to be scanned!
@@ -646,15 +634,15 @@ do
 			status.data = {} -- the data we've scanned so far
 			status.isScanning = "getAll" -- used to prevent functions from running when we're not supposed to be scanning
 			status.callbackHandler = callbackHandler
-		
+
 			QueryAuctionItems("", "", "", nil, nil, nil, nil, nil, nil, true)
-			
+
 			scanFrame.num = 0
 			scanFrame.tries = 3
 			dataAvailableFrame.totalDelay = 20
 			dataAvailableFrame.delay = 2
 			dataAvailableFrame:Show()
-			
+
 			return 1 -- scan started successfully (return code 1)
 		end
 	end
@@ -670,7 +658,7 @@ end
 
 do
 	lib.findFrame = lib.findFrame or CreateFrame("Frame")
-	
+
 	local equipLocLookup = {
 		[INVTYPE_HEAD]=1, [INVTYPE_NECK]=2, [INVTYPE_SHOULDER]=3, [INVTYPE_BODY]=4, [INVTYPE_CHEST]=5,
 		[INVTYPE_WAIST]=6, [INVTYPE_LEGS]=7, [INVTYPE_FEET]=8, [INVTYPE_WRIST]=9, [INVTYPE_HAND]=10,
@@ -678,9 +666,9 @@ do
 		[INVTYPE_WEAPONMAINHAND]=15, [INVTYPE_ROBE]=16, [INVTYPE_TABARD]=17, [INVTYPE_BAG]=18,
 		[INVTYPE_2HWEAPON]=19, [INVTYPE_RANGED]=20, [INVTYPE_SHIELD]=21, [INVTYPE_WEAPON]=22
 	}
-	
+
 	local private, status = {}, {}
-	
+
 	local function eventHandler(frame, event)
 		if event == "AUCTION_HOUSE_SHOW" then
 			-- auction house was opened
@@ -696,7 +684,7 @@ do
 			if status.isScanning then
 				status.timeDelay = 0
 				CancelFrame("auctionFindScanDelay")
-				
+
 				-- now that our query was successful we can get our data
 				private:ScanAuctions()
 			end
@@ -715,45 +703,45 @@ do
 	function lib:GetCommonAuctionQueryInfo(items, nameFilter)
 		if not nameFilter or not items or #items == 0 then return end
 		local result = {name=nameFilter, minLevel=nil, maxLevel=nil, invType=-1, class=-1, subClass=-1, quality=4}
-		
+
 		for _, itemString in ipairs(items) do
 			local itemFilters = lib:GetAuctionQueryInfo(itemString)
 			if not itemFilters or not strfind(strlower(itemFilters.name), nameFilter) then return end
-			
+
 			if not result.minLevel or itemFilters.minLevel < result.minLevel then
 				result.minLevel = itemFilters.minLevel
 			end
-			
+
 			if not result.maxLevel or itemFilters.maxLevel > result.maxLevel then
 				result.maxLevel = itemFilters.maxLevel
 			end
-			
+
 			if result.invType == -1 then
 				result.invType = itemFilters.invType
 			elseif result.invType ~= itemFilters.invType then
 				result.invType = 0
 			end
-			
+
 			if result.class == -1 then
 				result.class = itemFilters.class
 			elseif result.class ~= itemFilters.class then
 				result.class = 0
 			end
-			
+
 			if result.subClass == -1 then
 				result.subClass = itemFilters.subClass
 			elseif result.subClass ~= itemFilters.subClass then
 				result.subClass = 0
 			end
-			
+
 			if result.quality > itemFilters.quality then
 				result.quality = itemFilters.quality
 			end
 		end
-		
+
 		return result
 	end
-	
+
 	local function IsTargetAuction(index)
 		local itemID = Get
 		local itemString = GetItemString(GetAuctionItemLink("list", index))
@@ -763,24 +751,24 @@ do
 		if type(info.itemString) == "number" then
 			itemString = itemID
 		end
-		
+
 		return (not info.itemString or itemString == info.itemString) and (not info.count or count == info.count) and (not info.bid or bid == info.bid) and (not info.buyout or buyout == info.buyout) and (not info.seller or seller == info.seller)
 	end
 
 	-- valid targetInfo keys: itemString, count, bid, buyout, seller
 	function lib:FindAuction(callback, targetInfo)
 		if status.isScanning then lib:StopFindScan() end
-		
+
 		local name, _, rarity, _, minLevel, class, subClass, _, equipLoc = GetSafeItemInfo(targetInfo.itemString)
 		status.query = {name=name, minLevel=minLevel, maxLevel=minLevel, invSlot=(equipLocLookup[equipLoc] or 0), class=class, subClass=subClass, rarity=rarity}
 		status.targetInfo = targetInfo
 		status.callback = callback
-		
+
 		status.page = 0
 		status.isScanning = true
 		status.retries = 0
 		status.hardRetry = nil
-		
+
 		-- check if the item is on the current page
 		for i=1, GetNumAuctionItems("list") do
 			if IsTargetAuction(i) then
@@ -789,7 +777,7 @@ do
 				return
 			end
 		end
-		
+
 		private:SendQuery()
 	end
 
@@ -799,7 +787,7 @@ do
 		if CanSendAuctionQuery() then
 			-- stop delay timer
 			CancelFrame("auctionFindQueryDelay")
-			
+
 			-- query the auction house (then waits for AUCTION_ITEM_LIST_UPDATE to fire)
 			lib.findFrame:RegisterEvent("AUCTION_ITEM_LIST_UPDATE")
 			QueryAuctionItems(status.query.name, status.query.minLevel, status.query.maxLevel, status.query.invType, status.query.class, status.query.subClass, status.page, 0, status.query.rarity)
@@ -818,7 +806,7 @@ do
 		local shown, total = GetNumAuctionItems("list")
 		local totalPages = math.ceil(total / 50)
 		local temp = {}
-		
+
 		-- Check for bad data
 		if status.retries < 3 then
 			if AuctionDataIsBad(temp) then
@@ -832,7 +820,7 @@ do
 					-- runs a delay and then tries to scan the query again
 					status.timeDelay = status.timeDelay + BASE_DELAY
 					CreateTimeDelay("auctionFindScanDelay", BASE_DELAY, private.ScanAuctions)
-		
+
 					-- If after 4 seconds of retrying we still don't have data, will go and requery to try and solve the issue
 					-- if we still don't have data, we try to scan it anyway and move on.
 					if status.timeDelay >= 4 then
@@ -840,14 +828,14 @@ do
 						status.retries = 0
 					end
 				end
-				
+
 				return
 			end
 		end
-		
+
 		status.hardRetry = nil
 		status.retries = 0
-		
+
 		-- now that we know our query is good, time to verify and then store our data
 		for i=1, shown do
 			if IsTargetAuction(temp[i].index) then
@@ -863,7 +851,7 @@ do
 			private:SendQuery()
 			return
 		end
-		
+
 		-- we are done scanning!
 		lib:StopFindScan()
 		return status.callback()
@@ -876,7 +864,7 @@ do
 		CancelFrame("auctionFindQueryDelay")
 		CancelFrame("auctionFindScanDelay")
 	end
-	
+
 	function lib:IsFindScanning()
 		return status.isScanning and CopyTable(status.targetInfo)
 	end

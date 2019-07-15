@@ -126,7 +126,7 @@ local savedDBDefaults = {
 -- Called once the player has loaded WOW.
 function TSM:OnInitialize()
 	TSMAPI:RegisterForTracing(TSMAPI, "TSMAPI")
-	
+
 	TSM.moduleObjects = nil
 	TSM.moduleNames = nil
 
@@ -141,9 +141,9 @@ function TSM:OnInitialize()
 	else
 		TSM.operations = TSM.db.profile.operations
 	end
-	
+
 	TSM:RegisterEvent("BLACK_MARKET_ITEM_UPDATE", "ScanBMAH")
-	
+
 	-- Prepare the TradeSkillMasterAppDB database
 	-- We're not using AceDB here on purpose due to bugs in AceDB, but are emulating the parts of it that we need.
 	local json = TradeSkillMasterAppDB
@@ -238,17 +238,15 @@ function TSM:OnInitialize()
 			TSM.db.profile.items[itemString] = nil
 		end
 	end
-	
+
 	if TSM.db.profile.deValueSource then
 		TSM.db.profile.destroyValueSource = TSM.db.profile.deValueSource
 		TSM.db.profile.deValueSource = nil
 	end
-	
-	-- Cache battle pet names
-	for i=1, C_PetJournal.GetNumPets() do C_PetJournal.GetPetInfoByIndex(i) end
+
 	-- force a garbage collection
 	collectgarbage()
-	
+
 	TSMAPI:CreateTimeDelay(3, TSM.App.LoadData)
 end
 
@@ -423,7 +421,7 @@ function TSM:GetTooltip(itemString, quantity)
 					tinsert(text, { left = "  " .. L["Disenchant Value:"], right = TSMAPI:FormatTextMoney(deValue, "|cffffffff", true) })
 				end
 			end
-			
+
 			if TSM.db.profile.detailedDestroyTooltip then
 				local _, itemLink, quality, ilvl, _, iType = TSMAPI:GetSafeItemInfo(itemString)
 				local itemString = TSMAPI:GetItemString(itemLink)
@@ -455,7 +453,7 @@ function TSM:GetTooltip(itemString, quantity)
 			end
 		end
 	end
-	
+
 	-- add mill value info
 	if TSM.db.profile.millTooltip then
 		local millValue = TSM:GetMillValue(itemString)
@@ -473,7 +471,7 @@ function TSM:GetTooltip(itemString, quantity)
 					tinsert(text, { left = "  " .. L["Mill Value:"], right = TSMAPI:FormatTextMoney(millValue, "|cffffffff", true) })
 				end
 			end
-			
+
 			if TSM.db.profile.detailedDestroyTooltip then
 				for _, targetItem in ipairs(TSMAPI:GetConversionTargetItems("mill")) do
 					local herbs = TSMAPI:GetItemConversions(targetItem)
@@ -495,7 +493,7 @@ function TSM:GetTooltip(itemString, quantity)
 			end
 		end
 	end
-	
+
 	-- add prospect value info
 	if TSM.db.profile.prospectTooltip then
 		local prospectValue = TSM:GetProspectValue(itemString)
@@ -513,7 +511,7 @@ function TSM:GetTooltip(itemString, quantity)
 					tinsert(text, { left = "  " .. L["Prospect Value:"], right = TSMAPI:FormatTextMoney(prospectValue, "|cffffffff", true) })
 				end
 			end
-			
+
 			if TSM.db.profile.detailedDestroyTooltip then
 				for _, targetItem in ipairs(TSMAPI:GetConversionTargetItems("prospect")) do
 					local gems = TSMAPI:GetItemConversions(targetItem)
@@ -579,7 +577,7 @@ function TSM:GetTooltip(itemString, quantity)
 			end
 		end
 	end
-	
+
 	for name, method in pairs(TSM.db.global.customPriceSources) do
 		if TSM.db.global.customPriceTooltips[name] then
 			local price = TSM:GetCustomPrice(name, itemString)
@@ -622,7 +620,7 @@ end
 
 function TSM:GetMillValue(itemString)
 	local value = 0
-	
+
 	for _, targetItem in ipairs(TSMAPI:GetConversionTargetItems("mill")) do
 		local herbs = TSMAPI:GetItemConversions(targetItem)
 		if herbs[itemString] then
@@ -630,13 +628,13 @@ function TSM:GetMillValue(itemString)
 			value = value + (matValue or 0) * herbs[itemString].rate
 		end
 	end
-	
+
 	return value
 end
 
 function TSM:GetProspectValue(itemString)
 	local value = 0
-	
+
 	for _, targetItem in ipairs(TSMAPI:GetConversionTargetItems("prospect")) do
 		local gems = TSMAPI:GetItemConversions(targetItem)
 		if gems[itemString] then
@@ -644,7 +642,7 @@ function TSM:GetProspectValue(itemString)
 			value = value + (matValue or 0) * gems[itemString].rate
 		end
 	end
-	
+
 	return value
 end
 

@@ -24,13 +24,13 @@ local function CreateCustomPriceFrame()
 	frame:SetPoint("TOPLEFT", TSMMainFrame1, "TOPRIGHT", 2, 0)
 	frame:SetWidth(300)
 	frame:SetHeight(400)
-	
+
 	local container = AceGUI:Create("TSMScrollFrame")
 	container:SetLayout("Flow")
 	container.frame:SetParent(frame)
 	container.frame:SetPoint("TOPLEFT", 5, -5)
 	container.frame:SetPoint("BOTTOMRIGHT", -5, 5)
-	
+
 	local page = {
 		{
 			type = "Label",
@@ -114,7 +114,7 @@ local function CreateCustomPriceFrame()
 			relativeWidth = 1,
 		},
 	}
-	
+
 	if next(TSM.db.global.customPriceSources) then
 		frame:SetHeight(500)
 		local widgets = {
@@ -135,9 +135,9 @@ local function CreateCustomPriceFrame()
 			tinsert(page, widget)
 		end
 	end
-	
+
 	TSMAPI:BuildPage(container, page)
-	
+
 	return frame
 end
 
@@ -172,7 +172,7 @@ local function AddTooltip(widget, text, title)
 				GameTooltip:SetHyperlink("item:" .. text)
 			elseif tonumber(text) then
 				GameTooltip:SetHyperlink("enchant:"..text)
-			elseif type(tooltip) == "string" and (strfind(tooltip, "item:") or strfind(tooltip, "battlepet:")) then
+			elseif type(tooltip) == "string" and strfind(tooltip, "item:") then
 				TSMAPI:SafeTooltipLink(tooltip)
 			else
 				GameTooltip:AddLine(text, 1, 1, 1, 1)
@@ -180,7 +180,6 @@ local function AddTooltip(widget, text, title)
 			GameTooltip:Show()
 		end)
 	widget:SetCallback("OnLeave", function()
-			BattlePetTooltip:Hide()
 			GameTooltip:ClearLines()
 			GameTooltip:Hide()
 		end)
@@ -248,48 +247,48 @@ local Add = {
 		container:SetBackdrop(args.backdrop)
 		return container
 	end,
-		
+
 	SimpleGroup = function(parent, args)
 		local container = CreateContainer("TSMSimpleGroup", parent, args)
 		if args.height then container:SetHeight(args.height) end
 		return container
 	end,
-		
+
 	ScrollFrame = function(parent, args)
 		return CreateContainer("TSMScrollFrame", parent, args)
 	end,
-		
+
 	Image = function(parent, args)
 		local image = CreateWidget("TSMImage", parent, args)
 		image:SetImage(args.image)
 		image:SetSizeRatio(args.sizeRatio)
 		return image
 	end,
-		
+
 	Label = function(parent, args)
 		local labelWidget = CreateWidget("TSMLabel", parent, args)
 		labelWidget:SetColor(args.colorRed, args.colorGreen, args.colorBlue)
 		return labelWidget
 	end,
-		
+
 	MultiLabel = function(parent, args)
 		local labelWidget = CreateWidget("TSMMultiLabel", parent, args)
 		labelWidget:SetLabels(args.labelInfo)
 		return labelWidget
 	end,
-		
+
 	InteractiveLabel = function(parent, args)
 		local iLabelWidget = CreateWidget("TSMInteractiveLabel", parent, args)
 		iLabelWidget:SetCallback("OnClick", args.callback)
 		return iLabelWidget
 	end,
-		
+
 	Button = function(parent, args)
 		local buttonWidget = CreateWidget("TSMButton", parent, args)
 		buttonWidget:SetCallback("OnClick", args.callback)
 		return buttonWidget
 	end,
-		
+
 	GroupItemList = function(parent, args)
 		local groupItemList = CreateWidget("TSMGroupItemList", parent, args)
 		groupItemList:SetIgnoreVisible(args.showIgnore)
@@ -300,14 +299,14 @@ local Add = {
 		groupItemList:SetCallback("OnRemoveClicked", args.onRemove)
 		return groupItemList
 	end,
-		
+
 	MacroButton = function(parent, args)
 		local macroButtonWidget = CreateWidget("TSMMacroButton", parent, args)
 		macroButtonWidget.frame:SetAttribute("type", "macro")
 		macroButtonWidget.frame:SetAttribute("macrotext", args.macroText)
 		return macroButtonWidget
 	end,
-	
+
 	EditBox = function(parent, args)
 		local editBoxWidget = CreateWidget("TSMEditBox", parent, args)
 		editBoxWidget:SetText(args.value)
@@ -337,14 +336,14 @@ local Add = {
 		end
 		return editBoxWidget
 	end,
-	
+
 	GroupBox = function(parent, args)
 		local groupBoxWidget = CreateWidget("TSMGroupBox", parent, args)
 		groupBoxWidget:SetText(args.value)
 		groupBoxWidget:SetCallback("OnValueChanged", args.callback)
 		return groupBoxWidget
 	end,
-		
+
 	CheckBox = function(parent, args)
 		local checkBoxWidget = CreateWidget("TSMCheckBox", parent, args)
 		checkBoxWidget:SetType(args.cbType or "checkbox")
@@ -356,7 +355,7 @@ local Add = {
 		checkBoxWidget:SetCallback("OnValueChanged", args.callback)
 		return checkBoxWidget
 	end,
-		
+
 	Slider = function(parent, args)
 		local sliderWidget = CreateWidget("TSMSlider", parent, args)
 		sliderWidget:SetValue(args.value)
@@ -365,7 +364,7 @@ local Add = {
 		sliderWidget:SetCallback("OnValueChanged", args.callback)
 		return sliderWidget
 	end,
-		
+
 	Icon = function(parent, args)
 		local iconWidget = CreateWidget("Icon", parent, args)
 		iconWidget:SetImage(args.image)
@@ -373,7 +372,7 @@ local Add = {
 		iconWidget:SetCallback("OnClick", args.callback)
 		return iconWidget
 	end,
-		
+
 	Dropdown = function(parent, args)
 		local dropdownWidget = CreateWidget("TSMDropdown", parent, args)
 		dropdownWidget:SetList(args.list, args.order)
@@ -388,7 +387,7 @@ local Add = {
 		dropdownWidget:SetCallback("OnValueChanged", args.callback)
 		return dropdownWidget
 	end,
-		
+
 	ColorPicker = function(parent, args)
 		local colorPicker = CreateWidget("TSMColorPicker", parent, args)
 		colorPicker:SetHasAlpha(args.hasAlpha)
@@ -399,14 +398,14 @@ local Add = {
 		colorPicker:SetCallback("OnValueConfirmed", args.callback)
 		return colorPicker
 	end,
-		
+
 	Spacer = function(parent, args)
 		args.quantity = args.quantity or 1
 		for i=1, args.quantity do
 			local spacer = parent:Add({type="Label", text=" ", relativeWidth=1})
 		end
 	end,
-		
+
 	HeadingLine = function(parent, args)
 		local heading = AceGUI:Create("Heading")
 		heading:SetText("")

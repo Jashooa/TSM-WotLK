@@ -92,14 +92,14 @@ end
 -- Deletes a group with the specified path and everything (items/subGroups) below it
 local function DeleteGroup(groupPath)
 	if not TSM.db.profile.groups[groupPath] then return end
-	
+
 	-- delete this group and all subgroups
 	for path in pairs(TSM.db.profile.groups) do
 		if path == groupPath or strfind(path, "^"..TSMAPI:StrEscape(groupPath)..TSM.GROUP_SEP) then
 			TSM.db.profile.groups[path] = nil
 		end
 	end
-	
+
 	local parent = SplitGroupPath(groupPath)
 	if parent and TSM.db.profile.keepInParent then
 		-- move all items in this group its subgroups to the parent
@@ -126,7 +126,7 @@ end
 local function MoveGroup(groupPath, newPath)
 	if not TSM.db.profile.groups[groupPath] then return end
 	if TSM.db.profile.groups[newPath] then return end
-	
+
 	-- change the path of all subgroups
 	local changes = {}
 	for path, groupData in pairs(TSM.db.profile.groups) do
@@ -138,7 +138,7 @@ local function MoveGroup(groupPath, newPath)
 		TSM.db.profile.groups[newPath] = TSM.db.profile.groups[oldPath]
 		TSM.db.profile.groups[oldPath] = nil
 	end
-	
+
 	-- change the path for all items in this group (and subgroups)
 	changes = {}
 	for itemString, path in pairs(TSM.db.profile.items) do
@@ -155,7 +155,7 @@ end
 local function AddItem(itemString, path)
 	if not (strfind(path, TSM.GROUP_SEP) or not TSM.db.profile.items[itemString]) then return end
 	if not TSM.db.profile.groups[path] then return end
-	
+
 	TSM.db.profile.items[itemString] = path
 end
 
@@ -186,7 +186,7 @@ end
 local function SetOperation(path, module, operation, index)
 	if not TSM.db.profile.groups[path] then return end
 	if not TSM.db.profile.groups[path][module] then return end
-	
+
 	TSM.db.profile.groups[path][module][index] = operation
 	local subGroups = GetSubGroups(path)
 	if subGroups then
@@ -198,7 +198,7 @@ end
 
 local function AddOperation(path, module)
 	if not TSM.db.profile.groups[path] then return end
-	
+
 	tinsert(TSM.db.profile.groups[path][module], "")
 	local subGroups = GetSubGroups(path)
 	if subGroups then
@@ -219,7 +219,7 @@ end
 
 function SetOperationOverride(path, module, override)
 	if not TSM.db.profile.groups[path] then return end
-	
+
 	-- clear all operations for this path/module
 	TSM.db.profile.groups[path][module] = {override=(override or nil)}
 	-- set this group's (and all applicable subgroups') operation to the parent's
@@ -253,7 +253,7 @@ function TSM:GetGroupPathList(module)
 		end
 		tinsert(list, groupPath)
 	end
-	
+
 	for groupPath in pairs(TSM.db.profile.groups) do
 		if not disabled[groupPath] then
 			local pathParts = {TSM.GROUP_SEP:split(groupPath)}
@@ -263,14 +263,14 @@ function TSM:GetGroupPathList(module)
 			end
 		end
 	end
-	
+
 	sort(list, function(a,b) return strlower(gsub(a, TSM.GROUP_SEP, "\001")) < strlower(gsub(b, TSM.GROUP_SEP, "\001")) end)
 	return list, disabled
 end
 
 function TSM:GetGroupOperations(path, module)
 	if not TSM.db.profile.groups[path] then return end
-	
+
 	if module and TSM.db.profile.groups[path][module] then
 		local operations = CopyTable(TSM.db.profile.groups[path][module])
 		for i=#operations, 1, -1 do
@@ -304,7 +304,7 @@ function TSMAPI:CreatePresetGroups(itemList, moduleName, operationInfo)
 			end
 		end
 	end
-	
+
 	private:UpdateTree()
 end
 
@@ -339,13 +339,13 @@ local function ShowExportFrame(text)
 	f:SetTitle("TradeSkillMaster - "..L["Export Group Items"])
 	f:SetLayout("Fill")
 	f:SetHeight(300)
-	
+
 	local eb = AceGUI:Create("TSMMultiLineEditBox")
 	eb:SetLabel(L["Group Item Data"])
 	eb:SetMaxLetters(0)
 	eb:SetText(text)
 	f:AddChild(eb)
-	
+
 	f.frame:SetFrameStrata("FULLSCREEN_DIALOG")
 	f.frame:SetFrameLevel(100)
 end
@@ -367,12 +367,12 @@ function TSMAPI:DrawOperationManagement(TSMObj, container, operationName)
 	for playerName in pairs(TSM.db.factionrealm.characters) do
 		playerList[playerName.." - "..factionrealmKey] = playerName
 	end
-	
+
 	local factionrealmList = {}
 	for factionrealm in pairs(TSM.db.sv.factionrealm) do
 		factionrealmList[factionrealm] = factionrealm
 	end
-	
+
 	local groupList = {}
 	for path, modules in pairs(TSM.db.profile.groups) do
 		if modules[moduleName] then
@@ -384,7 +384,7 @@ function TSMAPI:DrawOperationManagement(TSMObj, container, operationName)
 		end
 	end
 	sort(groupList, function(a,b) return strlower(gsub(a, TSM.GROUP_SEP, "\001")) < strlower(gsub(b, TSM.GROUP_SEP, "\001")) end)
-	
+
 	local groupWidgets = {
 		{
 			type = "Label",
@@ -422,7 +422,7 @@ function TSMAPI:DrawOperationManagement(TSMObj, container, operationName)
 				text = TSMAPI:FormatGroupPath(groupPath, true),
 			})
 	end
-	
+
 	local page = {
 		{
 			type = "ScrollFrame",
@@ -642,7 +642,7 @@ function TSMAPI:DrawOperationManagement(TSMObj, container, operationName)
 			},
 		},
 	}
-	
+
 	TSMAPI:BuildPage(container, page)
 end
 
@@ -703,7 +703,7 @@ function TSMAPI:ShowOperationRelationshipTab(obj, container, operation, settingI
 		end
 	end
 	sort(operationListOrder)
-	
+
 	local target = ""
 	local children = {
 		{
@@ -790,8 +790,8 @@ function TSMAPI:ShowOperationRelationshipTab(obj, container, operation, settingI
 		}
 		tinsert(children, inlineGroup)
 	end
-	
-	
+
+
 	local page = {
 		{
 			type = "ScrollFrame",
@@ -799,7 +799,7 @@ function TSMAPI:ShowOperationRelationshipTab(obj, container, operation, settingI
 			children = children,
 		},
 	}
-	
+
 	TSMAPI:BuildPage(container, page)
 end
 
@@ -839,7 +839,7 @@ function TSM:LoadOperationOptions(parent)
 			end
 		end)
 	parent:AddChild(tabGroup)
-	
+
 	tabGroup:SelectTab(TSM.loadModuleOptionsTab and TSM.loadModuleOptionsTab.module or "Help")
 end
 
@@ -863,7 +863,7 @@ function private:DrawOperationHelp(container)
 			},
 		},
 	}
-	
+
 	TSMAPI:BuildPage(container, page)
 end
 
@@ -878,7 +878,7 @@ function TSM:LoadGroupOptions(parent)
 	treeGroup:SetCallback("OnGroupSelected", function(...) private:SelectTree(...) end)
 	treeGroup:SetStatusTable(TSM.db.profile.groupTreeStatus)
 	parent:AddChild(treeGroup)
-	
+
 	private:UpdateTree()
 	treeGroup:SelectByPath(1)
 end
@@ -904,7 +904,7 @@ local function UpdateTreeHelper(currentPath, groupPathList, index, treeGroupChil
 end
 function private:UpdateTree()
 	if not treeGroup then return end
-	
+
 	local groupChildren = {}
 	local groupPathList = TSM:GetGroupPathList()
 	UpdateTreeHelper(nil, groupPathList, 1, groupChildren, 1)
@@ -925,7 +925,7 @@ end
 local scrollFrameStatus = {}
 function private:SelectTree(treeGroup, _, selection)
 	treeGroup:ReleaseChildren()
-	
+
 	selection = {("\001"):split(selection)}
 	if #selection == 1 then
 		private:DrawNewGroup(treeGroup)
@@ -1036,7 +1036,7 @@ function private:DrawNewGroup(container)
 			},
 		},
 	}
-	
+
 	TSMAPI:BuildPage(container, page)
 end
 
@@ -1051,7 +1051,7 @@ function private:DrawGroupOperationsPage(container, groupPath)
 		for name in pairs(TSM.operations[moduleName] or {}) do
 			ddList[name] = name
 		end
-		
+
 		TSM.db.profile.groups[groupPath][moduleName] = TSM.db.profile.groups[groupPath][moduleName] or {}
 		local operations = TSM.db.profile.groups[groupPath][moduleName]
 		for i=#operations, 1, -1 do
@@ -1070,7 +1070,7 @@ function private:DrawGroupOperationsPage(container, groupPath)
 			title = moduleName,
 			children = {},
 		}
-		
+
 		local addOperationWidget
 		if #operations < info.maxOperations then
 			addOperationWidget = {
@@ -1101,7 +1101,7 @@ function private:DrawGroupOperationsPage(container, groupPath)
 		else
 			tinsert(moduleInline.children, {type="Label", relativeWidth=1})
 		end
-		
+
 		for i=1, #operations do
 			tinsert(moduleInline.children, {
 					type = "Dropdown",
@@ -1145,7 +1145,7 @@ function private:DrawGroupOperationsPage(container, groupPath)
 			end
 		end
 		tinsert(moduleInline.children, addOperationWidget)
-		
+
 		local opStrs = {}
 		for _, name in ipairs(operations) do
 			if name ~= "" then
@@ -1159,12 +1159,12 @@ function private:DrawGroupOperationsPage(container, groupPath)
 				text = #opStrs > 0 and table.concat(opStrs, "\n") or format(L["Select a %s operation using the dropdown above."], moduleName),
 				relativeWidth = 1,
 			})
-		
+
 		tinsert(moduleInlines, moduleInline)
 	end
-	
+
 	sort(moduleInlines, function(a, b) return a.title < b.title end)
-	
+
 	local children = {}
 	for i, inline in ipairs(moduleInlines) do
 		tinsert(children, inline)
@@ -1172,7 +1172,7 @@ function private:DrawGroupOperationsPage(container, groupPath)
 			tinsert(children, {type="Spacer"})
 		end
 	end
-	
+
 	local page = {
 		{
 			type = "ScrollFrame",
@@ -1180,7 +1180,7 @@ function private:DrawGroupOperationsPage(container, groupPath)
 			children = children,
 		},
 	}
-	
+
 	TSMAPI:BuildPage(container, page)
 end
 
@@ -1190,7 +1190,7 @@ function private:DrawGroupItemsPage(container, groupPath)
 		alreadyLoaded[groupPath] = true
 		TSMAPI:CreateTimeDelay("itemsTabLoad", 0.1, function() container:ReloadTab() end)
 	end
-	
+
 	local parentPath, groupName = SplitGroupPath(groupPath)
 	local function GetItemList(side)
 		local list = {}
@@ -1236,7 +1236,7 @@ function private:DrawGroupItemsPage(container, groupPath)
 		end
 		return list
 	end
-	
+
 	local leftTitle, rightTitle
 	if parentPath then
 		if TSM.db.profile.directSubgroupAdd then
@@ -1249,7 +1249,7 @@ function private:DrawGroupItemsPage(container, groupPath)
 		leftTitle = L["Ungrouped Items:"]
 		rightTitle = L["Group Items:"]
 	end
-	
+
 	local page = {
 		{	-- scroll frame to contain everything
 			type = "SimpleGroup",
@@ -1294,7 +1294,7 @@ function TSM:ImportGroup(importStr, groupPath)
 	importStr = importStr:trim()
 	if importStr == "" then return end
 	local parentPath = strfind(groupPath, TSM.GROUP_SEP) and SplitGroupPath(groupPath)
-	
+
 	if strfind(importStr, "^|c") then
 		local itemString = TSMAPI:GetItemString(importStr)
 		if not itemString then return end
@@ -1308,7 +1308,7 @@ function TSM:ImportGroup(importStr, groupPath)
 		end
 		return 0
 	end
-	
+
 	local items = {}
 	local currentSubPath = ""
 	for _, str in ipairs(TSMAPI:SafeStrSplit(importStr, ",")) do
@@ -1320,14 +1320,12 @@ function TSM:ImportGroup(importStr, groupPath)
 		elseif strfind(noSpaceStr, "^group:") then
 			subPath = strsub(str, strfind(str, ":")+1, -1)
 			subPath = gsub(subPath, TSM.GROUP_SEP.."[ ]*"..TSM.GROUP_SEP, ",")
-		elseif strfind(noSpaceStr, "p") then
-			itemString = gsub(noSpaceStr, "p", "battlepet")
 		elseif strfind(noSpaceStr, ":") then
 			local itemID, randomEnchant = (":"):split(noSpaceStr)
 			if not tonumber(itemID) or not tonumber(randomEnchant) then return end
 			itemString = "item:"..tonumber(itemID)..":0:0:0:0:0:"..tonumber(randomEnchant)
 		end
-		
+
 		if subPath then
 			currentSubPath = subPath
 		elseif itemString then
@@ -1336,7 +1334,7 @@ function TSM:ImportGroup(importStr, groupPath)
 			return
 		end
 	end
-	
+
 	local num = 0
 	for itemString, subPath in pairs(items) do
 		if not (parentPath and TSM.db.profile.moveImportedItems and TSM.db.profile.importParentOnly and TSM.db.profile.items[itemString] ~= parentPath) then
@@ -1401,9 +1399,6 @@ function TSM:ExportGroup(groupPath)
 			else
 				tinsert(items, itemID)
 			end
-		elseif strfind(itemString, "^battlepet:") then
-			itemString = gsub(itemString, "battlepet", "p")
-			tinsert(items, itemString)
 		end
 	end
 	return table.concat(items, ",")
@@ -1441,7 +1436,7 @@ function private:DrawGroupImportExportPage(container, groupPath)
 									private:SelectGroup(groupPath)
 									TSMAPI:FireEvent("TSM:GROUPS:ADDITEMS", {num=num, group=groupPath, isImport=true})
 								end,
-							tooltip = L["Paste the exported items into this box and hit enter or press the 'Okay' button. The recommended format for the list of items is a comma separated list of itemIDs for general items. For battle pets, the entire battlepet string should be used. For randomly enchanted items, the format is <itemID>:<randomEnchant> (ex: 38472:-29)."],
+							tooltip = L["Paste the exported items into this box and hit enter or press the 'Okay' button. The recommended format for the list of items is a comma separated list of itemIDs for general items. For randomly enchanted items, the format is <itemID>:<randomEnchant> (ex: 38472:-29)."],
 						},
 						{
 							type = "CheckBox",
@@ -1610,7 +1605,7 @@ function private:DrawGroupManagementPage(container, groupPath)
 									if TSM.db.profile.groups[newPath] then
 										return TSM:Printf(L["Error moving group. Group '%s' already exists."], TSMAPI:FormatGroupPath(newPath, true))
 									end
-									
+
 									TSM:Printf(L["Moved %s to %s."], TSMAPI:FormatGroupPath(groupPath, true), TSMAPI:FormatGroupPath(value, true))
 									MoveGroup(groupPath, newPath)
 									TSMAPI:FireEvent("TSM:GROUPS:MOVEGROUP", {old=groupPath, new=newPath})
@@ -1630,7 +1625,7 @@ function private:DrawGroupManagementPage(container, groupPath)
 								if TSM.db.profile.groups[newPath] then
 									return TSM:Printf(L["Error moving group. Group '%s' already exists."], TSMAPI:FormatGroupPath(newPath, true))
 								end
-								
+
 								TSM:Printf(L["Moved %s to %s."], TSMAPI:FormatGroupPath(groupPath, true), TSMAPI:FormatGroupPath(newPath, true))
 								MoveGroup(groupPath, newPath)
 								TSMAPI:FireEvent("TSM:GROUPS:MOVEGROUP", {old=groupPath, new=newPath})
