@@ -12,7 +12,6 @@ local L = LibStub("AceLocale-3.0"):GetLocale("TradeSkillMaster_Mailing") -- load
 
 local private = {tabs = {}}
 
-
 function MailTab:OnEnable()
 	MailTab:RegisterEvent("MAIL_SHOW", function() TSMAPI:CreateTimeDelay("mailShowDelay", 0, private.OnMailShow) end)
 end
@@ -27,7 +26,7 @@ function private:OnMailShow()
 			end
 		end
 	end
-	
+
 	-- make sure the second tab gets loaded so we can send mail
 	local currentTab = PanelTemplates_GetSelectedTab(MailFrame)
 	MailFrameTab2:Click()
@@ -41,24 +40,24 @@ function private:CreateMailTab()
 	frame:SetPoint("TOPLEFT")
 	frame:SetPoint("BOTTOMRIGHT", 40, 0)
 	frame:EnableMouse(true)
-	
+
 	local function OnTabClick(self)
 		PanelTemplates_SetTab(MailFrame, self:GetID())
-		ButtonFrameTemplate_HideButtonBar(MailFrame)
+		--ButtonFrameTemplate_HideButtonBar(MailFrame)
 		InboxFrame:Hide()
 		OpenMailFrame:Hide()
 		StationeryPopupFrame:Hide()
 		SendMailFrame:Hide()
-		SetSendMailShowing(false)
-		
-		MailFrameInset:Hide()
+        SetSendMailShowing(false)
+
+		--[[MailFrameInset:Hide()
 		MailFramePortraitFrame:Hide()
 		MailFrameBg:Hide()
 		if MailFrameText then MailFrameText:Hide() end
 		MailFrameTitleBg:Hide()
 		MailFrameTitleText:Hide()
 		MailFrameCloseButton:Hide()
-		
+
 		MailFrameLeftBorder:Hide()
 		MailFrameTopBorder:Hide()
 		MailFrameRightBorder:Hide()
@@ -66,8 +65,8 @@ function private:CreateMailTab()
 		MailFrameTopTileStreaks:Hide()
 		MailFrameTopRightCorner:Hide()
 		MailFrameBotLeftCorner:Hide()
-		MailFrameBotRightCorner:Hide()
-		
+		MailFrameBotRightCorner:Hide()]]--
+
 		private.frame:Show()
 		if TSM.db.global.defaultPage == 1 then
 			private.frame.inboxBtn:Click()
@@ -77,13 +76,20 @@ function private:CreateMailTab()
 			private.frame.quickSendBtn:Click()
 		elseif TSM.db.global.defaultPage == 4 then
 			private.frame.otherBtn:Click()
+        end
+
+        InboxCloseButton:Hide()
+        MailFrameTab1:SetPoint("BOTTOMLEFT", "MailFrame", "BOTTOMLEFT", 24, -30)
+        if Postal_ModuleMenuButton then
+			Postal_ModuleMenuButton:Hide()
 		end
 	end
-	
+
 	local function OnOtherTabClick()
 		if not private.frame then return end
-		private.frame:Hide()
-		MailFrameLeftBorder:Show()
+        private.frame:Hide()
+
+		--[[MailFrameLeftBorder:Show()
 		MailFrameTopBorder:Show()
 		MailFrameRightBorder:Show()
 		MailFrameBottomBorder:Show()
@@ -91,16 +97,22 @@ function private:CreateMailTab()
 		MailFrameTopRightCorner:Show()
 		MailFrameBotLeftCorner:Show()
 		MailFrameBotRightCorner:Show()
-		
+
 		MailFrameInset:Show()
 		MailFramePortraitFrame:Show()
 		MailFrameBg:Show()
 		if MailFrameText then MailFrameText:Show() end
 		MailFrameTitleBg:Show()
 		MailFrameTitleText:Show()
-		MailFrameCloseButton:Show()
+        MailFrameCloseButton:Show()]]--
+
+		InboxCloseButton:Show()
+		MailFrameTab1:SetPoint("BOTTOMLEFT", "MailFrame", "BOTTOMLEFT", 24, 44)
+		if Postal_ModuleMenuButton then
+			Postal_ModuleMenuButton:Show()
+        end
 	end
-	
+
 	MailTab:Hook("MailFrameTab_OnClick", OnOtherTabClick, true)
 
 	local n = MailFrame.numTabs + 1
@@ -116,7 +128,7 @@ function private:CreateMailTab()
 	PanelTemplates_SetNumTabs(MailFrame, n)
 	PanelTemplates_EnableTab(MailFrame, n)
 	frame.tab = tab
-	
+
 	local iconFrame = CreateFrame("Frame", nil, frame)
 	iconFrame:SetPoint("CENTER", frame, "TOPLEFT", 25, -25)
 	iconFrame:SetHeight(80)
@@ -140,28 +152,28 @@ function private:CreateMailTab()
 	ag:SetLooping("REPEAT")
 	iconFrame:SetScript("OnEnter", function() ag:Play() end)
 	iconFrame:SetScript("OnLeave", function() ag:Stop() end)
-	
+
 	local title = TSMAPI.GUI:CreateLabel(frame)
 	title:SetPoint("TOPLEFT", 40, -5)
 	title:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", -5, -25)
 	title:SetJustifyH("CENTER")
 	title:SetJustifyV("CENTER")
 	title:SetText("TSM_Mailing - "..TSM._version)
-	
+
 	local closeBtn = TSMAPI.GUI:CreateButton(frame, 19)
 	closeBtn:SetPoint("TOPRIGHT", -5, -5)
 	closeBtn:SetWidth(20)
 	closeBtn:SetHeight(20)
 	closeBtn:SetText("X")
 	closeBtn:SetScript("OnClick", CloseMail)
-	
+
 	local line = TSMAPI.GUI:CreateVerticalLine(frame, 0)
 	line:ClearAllPoints()
 	line:SetPoint("TOPRIGHT", -30, -1)
 	line:SetWidth(2)
 	line:SetHeight(30)
 	TSMAPI.GUI:CreateHorizontalLine(frame, -30)
-	
+
 	private:CreateTabs(frame)
 	return frame
 end
@@ -172,13 +184,13 @@ function private:CreateTabs(frame)
 		frame.groupsTab:Hide()
 		frame.otherTab:Hide()
 		frame.quickSendTab:Hide()
-		
+
 		frame.inboxBtn:UnlockHighlight()
 		frame.groupsBtn:UnlockHighlight()
 		frame.otherBtn:UnlockHighlight()
 		frame.quickSendBtn:UnlockHighlight()
 		self:LockHighlight()
-	
+
 		if self == frame.inboxBtn then
 			frame.inboxTab:Show()
 		elseif self == frame.groupsBtn then
@@ -189,7 +201,7 @@ function private:CreateTabs(frame)
 			frame.quickSendTab:Show()
 		end
 	end
-	
+
 	local button = TSMAPI.GUI:CreateButton(frame, 15)
 	button:SetPoint("TOPLEFT", 70, -40)
 	button:SetHeight(20)
@@ -197,7 +209,7 @@ function private:CreateTabs(frame)
 	button:SetText(INBOX)
 	button:SetScript("OnClick", OnButtonClick)
 	frame.inboxBtn = button
-	
+
 	local button = TSMAPI.GUI:CreateButton(frame, 15)
 	button:SetPoint("TOPLEFT", frame.inboxBtn, "TOPRIGHT", 5, 0)
 	button:SetHeight(20)
@@ -205,7 +217,7 @@ function private:CreateTabs(frame)
 	button:SetText(L["TSM Groups"])
 	button:SetScript("OnClick", OnButtonClick)
 	frame.groupsBtn = button
-	
+
 	local button = TSMAPI.GUI:CreateButton(frame, 15)
 	button:SetPoint("TOPLEFT", frame.groupsBtn, "TOPRIGHT", 5, 0)
 	button:SetHeight(20)
@@ -213,7 +225,7 @@ function private:CreateTabs(frame)
 	button:SetText(L["Quick Send"])
 	button:SetScript("OnClick", OnButtonClick)
 	frame.quickSendBtn = button
-	
+
 	local button = TSMAPI.GUI:CreateButton(frame, 15)
 	button:SetPoint("TOPLEFT", frame.quickSendBtn, "TOPRIGHT", 5, 0)
 	button:SetPoint("TOPRIGHT", -5, -40)
@@ -221,13 +233,13 @@ function private:CreateTabs(frame)
 	button:SetText(OTHER)
 	button:SetScript("OnClick", OnButtonClick)
 	frame.otherBtn = button
-	
+
 	TSMAPI.GUI:CreateHorizontalLine(frame, -70)
-	
+
 	local content = CreateFrame("Frame", nil, frame)
 	content:SetPoint("TOPLEFT", 0, -70)
 	content:SetPoint("BOTTOMRIGHT")
-	
+
 	frame.inboxTab = TSM.Inbox:CreateTab(content)
 	frame.inboxTab:Hide()
 	frame.groupsTab = TSM.Groups:CreateTab(content)
