@@ -305,7 +305,7 @@ function GUI:UpdateTradeSkills()
             TSM.db.factionrealm.tradeSkills[playerName][skillName].isSecondary = (i > 2) and true
 
             --local spellBookSlot = btns[i]:GetID() + btns[i]:GetParent().spellOffset
-            local _, link = GetSpellLink(spellName)
+            local _, link = GetSpellLink(skillName)
             if link then
                 TSM.db.factionrealm.tradeSkills[playerName][skillName].link = link
                 if skillName == GetTradeSkillLine() and i <= 2 and not TSM.isSyncing then
