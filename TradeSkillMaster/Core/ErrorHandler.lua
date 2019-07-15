@@ -95,7 +95,7 @@ local function ExtractErrorMessage(...)
 
 		msg = msg.." "..varStr
 	end
-	
+
 	return msg
 end
 
@@ -103,7 +103,7 @@ local function GetDebugStack()
 	local stackInfo = {}
 	local stackString = ""
 	local stack = debugstack(2) or debugstack(1)
-	
+
 	if type(stack) == "string" then
 		local lines = {("\n"):split(stack)}
 		for _, line in ipairs(lines) do
@@ -127,7 +127,7 @@ local function GetDebugStack()
 			end
 		end
 	end
-	
+
 	return table.concat(stackInfo, "\n")
 end
 
@@ -155,22 +155,22 @@ local function GetAddonList()
 	local hasAddonSuite = {}
 	local addons = {}
 	local addonString = ""
-	
+
 	for i = 1, GetNumAddOns() do
 		local name, _, _, enabled = GetAddOnInfo(i)
 		local version = GetAddOnMetadata(name, "X-Curse-Packaged-Version") or GetAddOnMetadata(name, "Version") or ""
 		if enabled then
 			local isSuite
-		
+
 			for _, addonSuite in ipairs(addonSuites) do
 				local commonTerm = addonSuite.commonTerm or addonSuite.name
-				
+
 				if StrStartCmp(name, commonTerm) then
 					isSuite = commonTerm
 					break
 				end
 			end
-			
+
 			if isSuite then
 				if not hasAddonSuite[isSuite] then
 					tinsert(addons, {name=name, version=version})
@@ -183,7 +183,7 @@ local function GetAddonList()
 			end
 		end
 	end
-	
+
 	for i, addonInfo in ipairs(addons) do
 		local info = addonInfo.name .. " (" .. addonInfo.version .. ")"
 		if i == #addons then
@@ -192,7 +192,7 @@ local function GetAddonList()
 			addonString = addonString .. "    " .. info .. "\n"
 		end
 	end
-	
+
 	return addonString
 end
 
@@ -213,7 +213,7 @@ local function ShowError(msg, isVerify)
 	f:SetLayout("Flow")
 	f:SetWidth(500)
 	f:SetHeight(400)
-	
+
 	local l = AceGUI:Create("Label")
 	l:SetFullWidth(true)
 	l:SetFontObject(GameFontNormal)
@@ -223,12 +223,12 @@ local function ShowError(msg, isVerify)
 		l:SetText(L["Looks like TradeSkillMaster has encountered an error. Please help the author fix this error by copying the entire error below and following the instructions for reporting bugs listed here (unless told elsewhere by the author):"].." |cffffff00http://tradeskillmaster.com/wiki|r")
 	end
 	f:AddChild(l)
-	
+
 	local heading = AceGUI:Create("Heading")
 	heading:SetText("")
 	heading:SetFullWidth(true)
 	f:AddChild(heading)
-	
+
 	local eb = AceGUI:Create("MultiLineEditBox")
 	eb:SetLabel(L["Error Info:"])
 	eb:SetMaxLetters(0)
@@ -237,7 +237,7 @@ local function ShowError(msg, isVerify)
 	eb:DisableButton(true)
 	eb:SetFullHeight(true)
 	f:AddChild(eb)
-	
+
 	f.frame:SetFrameStrata("FULLSCREEN_DIALOG")
 	f.frame:SetFrameLevel(100)
 	isErrorFrameVisible = true
@@ -255,9 +255,9 @@ end
 
 function TSMAPI:Verify(cond, err)
 	if cond then return end
-	
+
 	ignoreErrors = true
-	
+
 	tinsert(TSMERRORLOG, err)
 	if not isErrorFrameVisible then
 		TSM:Print(L["Looks like TradeSkillMaster has detected an error with your configuration. Please address this in order to ensure TSM remains functional."])
@@ -266,7 +266,7 @@ function TSMAPI:Verify(cond, err)
 		TSM:Print(L["Additional error suppressed"])
 		isErrorFrameVisible = 1
 	end
-	
+
 	ignoreErrors = false
 end
 
@@ -274,7 +274,7 @@ local function TSMErrorHandler(msg)
 	-- ignore errors while we are handling this error
 	ignoreErrors = true
 	TSMERRORTEMP = msg
-	
+
 	local color = TSMAPI.Design and TSMAPI.Design:GetInlineColor("link2") or ""
 	local color2 = TSMAPI.Design and TSMAPI.Design:GetInlineColor("advanced") or ""
 	local errorMessage = ""
@@ -309,15 +309,15 @@ function TSMAPI:Assert(cond, err)
 	isAssert = false
 end
 
-do
+--[[do
 	origErrorHandler = geterrorhandler()
 	local errHandlerFrame = CreateFrame("Frame", nil, nil, "TSMErrorHandlerTemplate")
 	errHandlerFrame.errorHandler = TSMErrorHandler
 	errHandlerFrame.origErrorHandler = origErrorHandler
 	seterrorhandler(errHandlerFrame.handler)
-end
+end]]--
 
---[===[@debug@ 
+--[===[@debug@
 --- Disables TSM's error handler until the game is reloaded.
 -- This is mainly used for debugging errors with TSM's error handler and should not be used in actual code.
 function TSMAPI:DisableErrorHandler()
@@ -340,13 +340,13 @@ function TSMAPI.Debug:DumpTable(tbl, maxDepth, maxItems, maxStr)
 	DEVTOOLS_DEPTH_CUTOFF = maxDepth or dumpDefaults.DEVTOOLS_DEPTH_CUTOFF
 	DEVTOOLS_MAX_ENTRY_CUTOFF = maxItems or dumpDefaults.DEVTOOLS_MAX_ENTRY_CUTOFF
 	DEVTOOLS_DEPTH_CUTOFF = maxStr or dumpDefaults.DEVTOOLS_DEPTH_CUTOFF
-	
+
 	if not IsAddOnLoaded("Blizzard_DebugTools") then
 		LoadAddOn("Blizzard_DebugTools")
 	end
-	
+
 	DevTools_Dump(tbl)
-	
+
 	for i, v in pairs(dumpDefaults) do
 		_G[i] = v
 	end
@@ -376,14 +376,14 @@ local function FormatTSMStack(obj, name, ...)
 		else
 			str = tostring(arg)
 		end
-		
+
 		if args then
 			args = args..", "..str
 		else
 			args = str
 		end
 	end
-	
+
 	local funcCall = "?"
 	if obj == select(1, ...) and args then
 		funcCall = (stackNameLookup[obj] or tostring(obj))..":"..name.."("..args..")"
@@ -392,7 +392,7 @@ local function FormatTSMStack(obj, name, ...)
 end
 
 -- this must be a separate function so we can return the ... after popping off the stack
-local function TrackPopStack(...)	
+local function TrackPopStack(...)
 	tremove(tsmStack, #tsmStack)
 	return ...
 end
