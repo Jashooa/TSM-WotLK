@@ -83,9 +83,9 @@ function Post:GetScanListAndSetup(GUIRef, options)
 	totalToPost, totalPosted, count = 0, 0, 0
 
 	local tempList, scanList = {}, {}
-	
+
 	Post:UpdateBagState()
-	
+
 	local function HasEnoughToPost(operation, itemString)
 		local maxStackSize = select(8, TSMAPI:GetSafeItemInfo(itemString)) or 1
 		local perAuction = min(maxStackSize, operation.stackSize)
@@ -129,7 +129,7 @@ function Post:GetScanListAndSetup(GUIRef, options)
 			tinsert(scanList, itemString)
 		end
 	end
-	
+
 	TSMAPI:FireEvent("AUCTIONING:POST:START", {numItems=#scanList, isGroup=true})
 	return scanList
 end
@@ -429,7 +429,7 @@ function Post:DoAction()
 		-- Fix in case Blizzard_AuctionUI hasn't set this value yet (which could cause an error)
 		AuctionFrameAuctions.duration = 2
 	end
-	
+
 	if not currentItem.itemString then
 		timeout:Hide()
 		Post:SkipItem()
@@ -497,7 +497,7 @@ function Post:GetAHGoldTotal()
 	local total = 0
 	local incomingTotal = 0
 	for i = 1, GetNumAuctionItems("owner") do
-		local count, _, _, _, _, _, _, buyoutAmount = select(3, GetAuctionItemInfo("owner", i))
+		local count, _, _, _, _, _, buyoutAmount = select(3, GetAuctionItemInfo("owner", i))
 		total = total + buyoutAmount
 		if count == 0 then
 			incomingTotal = incomingTotal + buyoutAmount

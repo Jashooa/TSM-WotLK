@@ -25,7 +25,7 @@ end
 
 function AuctionBuys.OnAuctionBidPlaced(_, index, amountPaid)
 	local link = GetAuctionItemLink("list", index)
-	local name, _, count, _, _, _, _, _, _, buyout = GetAuctionItemInfo("list", index)
+	local name, _, count, _, _, _, _, _, buyout = GetAuctionItemInfo("list", index)
 	if amountPaid == buyout then
 		lastPurchase = {name=name, link=link, count=count, buyout=buyout, buyout=buyout}
 	end
@@ -38,7 +38,7 @@ function AuctionBuys.FilterSystemMsg(_, _, msg, ...)
 		prevLineID = lineID
 		prevLineResult = nil
 		if not lastPurchase or msg ~= format(ERR_AUCTION_WON_S, lastPurchase.name) then return end
-		
+
 		prevLineResult = format(L["You won an auction for %sx%d for %s"], lastPurchase.link, lastPurchase.count, TSMAPI:FormatTextMoney(lastPurchase.buyout, "|cffffffff"))
 		return nil, prevLineResult, ...
 	end

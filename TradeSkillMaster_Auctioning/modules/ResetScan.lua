@@ -18,11 +18,11 @@ function Reset:Show(frame)
 	summaryST = summaryST or Reset:CreateSummaryST(frame.content)
 	summaryST:Show()
 	summaryST:SetData({})
-	
+
 	auctionST = auctionST or Reset:CreateAuctionST(frame.content)
 	auctionST:Hide()
 	auctionST:SetData({})
-	
+
 	resetButtons = resetButtons or Reset:CreateResetButtons(frame)
 	resetButtons:Show()
 	resetButtons.stop:Enable()
@@ -35,10 +35,10 @@ function Reset:Hide()
 	if summaryST then
 		summaryST:SetData({})
 		summaryST:Hide()
-		
+
 		auctionST:SetData({})
 		auctionST:Hide()
-		
+
 		resetButtons:Hide()
 		Reset.isSearching = nil
 	end
@@ -87,19 +87,19 @@ function Reset:CreateSummaryST(parent)
 			align = "RIGHT",
 		},
 	}
-	
+
 	local handlers = {
 		OnEnter = function(_, data, self)
 			if not data.operation then return end
 			local prices = TSM.Util:GetItemPrices(operation, data.itemString, true)
 			GameTooltip:SetOwner(self, "ANCHOR_NONE")
 			GameTooltip:SetPoint("BOTTOMLEFT", self, "TOPLEFT")
-			GameTooltip:AddLine(data.itemLink)				
+			GameTooltip:AddLine(data.itemLink)
 			GameTooltip:AddLine(L["Max Cost:"].." "..(TSMAPI:FormatTextMoney(prices.resetMaxCost, "|cffffffff") or "---"))
 			GameTooltip:AddLine(L["Min Profit:"].." "..(TSMAPI:FormatTextMoney(prices.resetMinProfit, "|cffffffff") or "---"))
 			GameTooltip:AddLine(L["Max Quantity:"].." "..(TSMAPI:FormatTextMoney(data.operation.resetMaxQuantity, "|cffffffff") or "---"))
 			GameTooltip:AddLine(L["Max Price Per:"].." "..(TSMAPI:FormatTextMoney(data.operation.resetMaxPricePer, "|cffffffff") or "---"))
-			
+
 			if TSM.Reset:IsScanning() then
 				GameTooltip:AddLine("\n"..L["Must wait for scan to finish before starting to reset."])
 			else
@@ -117,7 +117,7 @@ function Reset:CreateSummaryST(parent)
 				summaryST:Hide()
 				auctionST:Show()
 				resetButtons.summaryButton:Enable()
-				
+
 				currentItem = CopyTable(data)
 				Reset:UpdateAuctionST()
 				Reset:SelectAuctionRow(auctionST.rowData[1])
@@ -130,7 +130,7 @@ function Reset:CreateSummaryST(parent)
 			end
 		end,
 	}
-	
+
 	local st = TSMAPI:CreateScrollingTable(parent, stCols, handlers)
 	st:SetParent(parent)
 	st:SetAllPoints()
@@ -155,13 +155,13 @@ function Reset:CreateAuctionST(parent)
 			align = "RIGHT",
 		},
 	}
-	
+
 	local handlers = {
 		OnClick = function(_, data)
 			Reset:SelectAuctionRow(data)
 		end,
 	}
-	
+
 	local st = TSMAPI:CreateScrollingTable(parent, stCols, handlers)
 	st:SetParent(parent)
 	st:SetAllPoints()
@@ -175,13 +175,13 @@ function Reset:CreateResetButtons(parent)
 	frame:SetHeight(height)
 	frame:SetWidth(210)
 	frame:SetPoint("BOTTOMRIGHT", -92, 6)
-	
+
 	frame.Disable = function(self)
 		self.buyout:Disable()
 		self.cancel:Disable()
 		self.summaryButton:Disable()
 	end
-	
+
 	local function OnCancelClick(self)
 		if self.auction then
 			for i=GetNumAuctionItems("owner"), 1, -1 do
@@ -196,7 +196,7 @@ function Reset:CreateResetButtons(parent)
 		Reset:RegisterMessage("TSM_AH_EVENTS", Reset.RemoveCurrentAuction)
 		TSMAPI:WaitForAuctionEvents("Cancel")
 	end
-	
+
 	local function OnStopClick(self)
 		if self.isDone then
 			Reset:Hide()
@@ -207,14 +207,14 @@ function Reset:CreateResetButtons(parent)
 			Reset:DoneScanning()
 		end
 	end
-	
+
 	local function ReturnToSummary()
 		frame:Disable()
 		auctionST:Hide()
 		summaryST:Show()
 		Reset:UpdateSummaryST()
 	end
-	
+
 	local button = TSMAPI.GUI:CreateButton(frame, 22, "TSMAuctioningResetBuyoutButton")
 	button:SetPoint("TOPLEFT", -5, 0)
 	button:SetWidth(80)
@@ -222,7 +222,7 @@ function Reset:CreateResetButtons(parent)
 	button:SetText(BUYOUT)
 	button:SetScript("OnClick", Reset.BuyAuction)
 	frame.buyout = button
-	
+
 	local button = TSMAPI.GUI:CreateButton(frame, 18, "TSMAuctioningResetCancelButton")
 	button:SetPoint("TOPLEFT", frame.buyout, "TOPRIGHT", 5, 0)
 	button:SetWidth(70)
@@ -230,7 +230,7 @@ function Reset:CreateResetButtons(parent)
 	button:SetText(L["Cancel"])
 	button:SetScript("OnClick", OnCancelClick)
 	frame.cancel = button
-	
+
 	local button = TSMAPI.GUI:CreateButton(frame, 18, "TSMAuctioningResetStopButton")
 	button:SetPoint("TOPLEFT", frame.cancel, "TOPRIGHT", 5, 0)
 	button:SetWidth(60)
@@ -239,7 +239,7 @@ function Reset:CreateResetButtons(parent)
 	button:SetScript("OnClick", OnStopClick)
 	button.isDone = nil
 	frame.stop = button
-	
+
 	local summaryButton = TSMAPI.GUI:CreateButton(frame, 16)
 	summaryButton:SetPoint("TOPRIGHT", parent, "TOPRIGHT", -10, -50)
 	summaryButton:SetHeight(17)
@@ -247,7 +247,7 @@ function Reset:CreateResetButtons(parent)
 	summaryButton:SetScript("OnClick", ReturnToSummary)
 	summaryButton:SetText(L["Return to Summary"])
 	frame.summaryButton = summaryButton
-	
+
 	return frame
 end
 
@@ -318,7 +318,7 @@ end
 
 function Reset:GetScanListAndSetup(GUIRef, options)
 	local scanList, tempList, groupTemp = {}, {}, {}
-	
+
 	GUI = GUIRef
 	doneScanningText = nil
 	isScanning = true
@@ -327,7 +327,7 @@ function Reset:GetScanListAndSetup(GUIRef, options)
 	wipe(showCache)
 	wipe(itemsReset)
 	wipe(TSM.operationLookup)
-	
+
 	local temp = {}
 	for itemString, operations in pairs(options.itemOperations) do
 		for _, operation in ipairs(operations) do
@@ -337,19 +337,19 @@ function Reset:GetScanListAndSetup(GUIRef, options)
 			end
 		end
 	end
-	
+
 	for itemString, operations in pairs(temp) do
 		TSM.operationLookup[itemString] = operations
 		tinsert(scanList, itemString)
 	end
-	
+
 	return scanList
 end
 
 function Reset:ProcessItem(itemString)
 	local operations = TSM.operationLookup[itemString]
 	if not operations then return end
-	
+
 	for _, operation in ipairs(operations) do
 		Reset:ProcessItemOperation(itemString, operation)
 	end
@@ -362,7 +362,7 @@ function Reset:ProcessItemOperation(itemString, operation)
 	local priceLevels = {}
 	local addNormal, isFirstItem = true, true
 	local currentPriceLevel = -math.huge
-	
+
 	for _, record in ipairs(scanData.compactRecords) do
 		local itemBuyout = record:GetItemBuyout()
 		if itemBuyout then
@@ -376,25 +376,25 @@ function Reset:ProcessItemOperation(itemString, operation)
 			isFirstItem = false
 		end
 	end
-	
+
 	if addNormal then
 		tinsert(priceLevels, prices.normalPrice)
 	end
-	
+
 	for _, targetPrice in ipairs(priceLevels) do
 		local playerCost, cost, quantity, maxItemCost, playerQuantity = 0, 0, 0, 0, 0
-		
+
 		for _, record in ipairs(scanData.compactRecords) do
 			local itemBuyout = record:GetItemBuyout()
 			if itemBuyout then
 				if itemBuyout >= targetPrice then
 					break
 				end
-				
+
 				if itemBuyout > maxItemCost then
 					maxItemCost = itemBuyout
 				end
-				
+
 				if not record:IsPlayer() then
 					cost = cost + (record:GetItemBuyout() * record.totalQuantity)
 				else
@@ -404,31 +404,31 @@ function Reset:ProcessItemOperation(itemString, operation)
 				quantity = quantity + record.totalQuantity
 			end
 		end
-		
+
 		local profit = (targetPrice * quantity - (cost + playerCost)) / quantity
 		if profit > 0 then
 			tinsert(resetData, {prices=prices, itemString=itemString, targetPrice=targetPrice, cost=cost, quantity=quantity, profit=profit, maxItemCost=maxItemCost, playerQuantity=playerQuantity, operation=operation})
 		end
 	end
-	
+
 	Reset:UpdateSummaryST()
 end
 
 function Reset:ShouldShow(data)
 	local result = {validCost=true, validQuantity=true, validProfit=true, isValid=true}
-	
+
 	if data.cost > data.prices.resetMaxCost or data.maxItemCost > data.prices.resetMaxItemCost then
 		result.validCost = false
 	end
-	
+
 	if data.quantity > data.operation.resetMaxQuantity or data.quantity > (data.operation.resetMaxInventory - Reset:GetTotalQuantity(itemString)) then
 		result.validQuantity = false
 	end
-	
+
 	if data.profit < data.prices.resetMinProfit then
 		result.validProfit = false
 	end
-	
+
 	return (result.validCost and result.validQuantity and result.validProfit), result
 end
 
@@ -441,16 +441,16 @@ function Reset:GetSummarySTRow(data)
 				return quantity
 			end
 		end
-		
+
 		return "|cffff2222"..quantity.."|r"
 	end
-	
+
 	local function GetPriceText(amount, isValid)
 		local color
 		if not isValid then
 			color = "|cffff2222"
 		end
-	
+
 		return TSMAPI:FormatTextMoney(amount, color, true) or "---"
 	end
 
@@ -490,14 +490,14 @@ function Reset:GetSummarySTRow(data)
 		profit = data.profit,
 		operation = operation,
 	}
-	
+
 	return row
 end
 
 function Reset:UpdateSummaryST()
 	local rows = {}
 	local num = 0
-	
+
 	for _, data in ipairs(resetData) do
 		if not itemsReset[data.itemString] then
 			if showCache[data] == nil then
@@ -513,7 +513,7 @@ function Reset:UpdateSummaryST()
 	end
 
 	summaryST:SetData(rows)
-	
+
 	if doneScanningText then
 		TSM.Manage:SetInfoText(doneScanningText)
 	end
@@ -526,10 +526,10 @@ function Reset:GetAuctionSTRow(record, index)
 		elseif TSM.db.factionrealm.whitelist[strlower(name)] then
 			return name .. " |cffff2222(" .. L["Whitelist"] .. ")|r"
 		end
-		
+
 		return name
 	end
-	
+
 	local row = {
 		cols = {
 			{
@@ -549,41 +549,41 @@ function Reset:GetAuctionSTRow(record, index)
 		itemString = TSMAPI:GetBaseItemString(record.parent:GetItemString(), true),
 		index = index,
 	}
-	
+
 	return row
 end
 
 function Reset:UpdateAuctionST()
 	local scanData = TSM.Scan.auctionData[currentItem.itemString]
-	
+
 	local rows = {}
-	
+
 	for i, record in ipairs(scanData.records) do
 		local itemBuyout = record:GetItemBuyout()
 		if itemBuyout and itemBuyout >= currentItem.targetPrice then
 			break
 		end
-		
+
 		tinsert(rows, Reset:GetAuctionSTRow(record, i))
 	end
-	
+
 	auctionST:SetData(rows)
 end
 
 function Reset:SelectAuctionRow(data)
 	local function OnAuctionFound(index)
 		local row = auctionST.rowData[auctionST:GetSelection()]
-		
+
 		resetButtons.summaryButton:Enable()
 		resetButtons.buyout:Enable()
 		resetButtons.buyout.auction = {index=index, row=row.itemString, record=row.record}
 	end
-	
+
 	local row = data
 	resetButtons.buyout:Disable()
 	resetButtons.cancel:Disable()
 	justBought = {}
-	
+
 	if row.record:IsPlayer() then
 		resetButtons.summaryButton:Enable()
 		resetButtons.cancel:Enable()
@@ -604,7 +604,7 @@ function Reset:RemoveCurrentAuction()
 	scanData:RemoveRecord(row.index)
 	itemsReset[row.itemString] = true
 	Reset:UpdateAuctionST()
-	
+
 	if #auctionST.rowData == 0 then
 		TSM.Scan.auctionData[row.itemString] = nil
 		resetButtons.summaryButton:Enable()
@@ -617,7 +617,7 @@ end
 
 function Reset:VerifyAuction(index, tab, record, itemString)
 	local iString = TSMAPI:GetBaseItemString(GetAuctionItemLink(tab, index), true)
-	local _, _, count, _, _, _, _, minBid, _, buyout, bid = GetAuctionItemInfo(tab, index)
+	local _, _, count, _, _, _, minBid, _, buyout, bid = GetAuctionItemInfo(tab, index)
 	return (iString == itemString and bid == record.bid and minBid == record.minBid and buyout == record.buyout and count == record.count)
 end
 
@@ -650,7 +650,7 @@ function Reset:DoneScanning()
 			totalProfit = totalProfit + data.profit * data.quantity
 		end
 	end
-	
+
 	resetButtons.stop:SetText(L["Restart"])
 	resetButtons.stop.isDone = true
 	isScanning = false
@@ -673,7 +673,7 @@ end
 
 local function ValidateAuction(index, listType)
 	local itemString = TSMAPI:GetBaseItemString(GetAuctionItemLink(listType, index), true)
-	local _, _, count, _, _, _, _, _, _, buyout = GetAuctionItemInfo(listType, index)
+	local _, _, count, _, _, _, _, _, buyout = GetAuctionItemInfo(listType, index)
 	return count == currentAuction.count and buyout == currentAuction.buyout and itemString == currentAuction.itemString
 end
 
@@ -697,7 +697,7 @@ function Reset:BuyAuction()
 		foundAuction = true
 		justBought[mainIndex or altIndex] = true
 	end
-	
+
 	resetButtons.buyout:Disable()
 	if foundAuction then
 		-- wait for all the events that are triggered by this action

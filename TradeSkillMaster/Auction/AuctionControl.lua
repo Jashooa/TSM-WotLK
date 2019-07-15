@@ -34,7 +34,7 @@ local function ValidateAuction(index, list)
 		itemString, count, buyout = unpack(list)
 	elseif type(list) == "string" then
 		itemString = TSMAPI:GetItemString(GetAuctionItemLink(list, index))
-		_, _, count, _, _, _, _, _, _, buyout = GetAuctionItemInfo(list, index)
+		_, _, count, _, _, _, _, _, buyout = GetAuctionItemInfo(list, index)
 		data = {itemString, count, buyout}
 	else
 		return
@@ -85,7 +85,7 @@ function private:SetCurrentAuction(record)
 		private.currentAuction = nil
 		return
 	end
-	
+
 	local buyout = record.buyout
 	if private.confirmationMode == "Post" and not record:IsPlayer() then
 		local undercut = TSMAPI:ParseCustomPrice(private.postUndercut)
@@ -120,17 +120,17 @@ function private:FindCurrentAuctionForBuyout(noCache, resetCount)
 		count = 0
 	end
 	count = count + 1
-	
+
 	private:UpdateMatchList(true)
 	if #private.matchList > 0 then
 		-- the next item is on the current page
 		private:UpdateAuctionConfirmation()
 		return
 	end
-	
+
 	private.matchList = {}
 	private.currentPage = {}
-	
+
 	if count > 3 then
 		-- auction no longer exists
 		TSM:Print(L["Skipping auction which no longer exists."])
@@ -157,13 +157,13 @@ function private:DoBuyout()
 			return
 		end
 	end
-	
+
 	private:FindCurrentAuctionForBuyout()
 end
 
 function private:DoCancel()
 	if private.isSearching or not private.currentAuction or not private.confirmationFrame:IsVisible() then return end
-	
+
 	local function OnCancel()
 		private.justBought = true
 		private:AUCTION_ITEM_LIST_UPDATE()
@@ -178,7 +178,7 @@ function private:DoCancel()
 			return
 		end
 	end
-	
+
 	TSM:Print(L["Auction not found. Skipped."])
 	private.justBought = true
 	private:AUCTION_ITEM_LIST_UPDATE()
@@ -186,12 +186,12 @@ end
 
 function private:DoPost(postInfo)
 	if private.isSearching or not postInfo or not private.postFrame:IsVisible() then return end
-	
+
 	if not AuctionFrameAuctions.duration then
 		-- Fix in case Blizzard_AuctionUI hasn't set this value yet (which could cause an error)
 		AuctionFrameAuctions.duration = postInfo.duration
 	end
-	
+
 	local bag, slot
 	for b, s, itemString in TSMAPI:GetBagIterator() do
 		if postInfo.itemString == itemString then
@@ -203,7 +203,7 @@ function private:DoPost(postInfo)
 		TSM:Print(L["Item not found in bags. Skipping"])
 		return
 	end
-	
+
 	local function OnPost()
 		private.postFrame:Hide()
 		postInfo.duration = postInfo.duration == 1 and 3 or 4
@@ -220,7 +220,7 @@ end
 
 function private:UpdateMatchList(noPageScanning)
 	private.matchList = {}
-	
+
 	if noPageScanning then
 		for i=1, #private.currentPage do
 			if ValidateAuction(i, private.currentPage[i]) then
@@ -242,9 +242,9 @@ end
 function private:OnAuctionFound(cacheIndex)
 	if not private.isSearching or not private.currentAuction then return end
 	private.isSearching = nil
-	
+
 	private:UpdateMatchList()
-	
+
 	if #private.matchList == 0 then
 		private:FindCurrentAuctionForBuyout(true)
 	else
@@ -255,7 +255,7 @@ end
 
 function private:AUCTION_ITEM_LIST_UPDATE()
 	if not private.currentAuction or not TSMAPI:AHTabIsVisible(private.module) then return end
-	
+
 	if private.justBought then
 		private.justBought = nil
 		private.currentAuction.num = private.currentAuction.num + 1
@@ -269,12 +269,12 @@ function private:AUCTION_ITEM_LIST_UPDATE()
 				private:FindCurrentAuctionForBuyout(nil, true)
 			end
 		end
-		
+
 		if private.currentCacheIndex then
 			TSMAPI.AuctionScan:CacheRemove(prevAuction.itemString, private.currentCacheIndex)
 			private.currentCacheIndex = nil
 		end
-		
+
 		TSM:AuctionControlCallback("OnBuyout", prevAuction)
 	end
 end
@@ -346,7 +346,7 @@ function private:ShowConfirmationWindow()
 	end
 	private:SetCurrentAuction(private.rt:GetSelectedAuction())
 	if not private.currentAuction then return end
-	
+
 	private:RegisterEvent("AUCTION_ITEM_LIST_UPDATE")
 	diffFrame.num = 0
 	diffFrame:Show()
@@ -377,7 +377,7 @@ function private:ShowPostWindow()
 		private:SetCurrentAuction(private.rt:GetSelectedAuction())
 	end
 	if not private.currentAuction then return end
-	
+
 	private:RegisterEvent("AUCTION_ITEM_LIST_UPDATE")
 	diffFrame.num = 0
 	diffFrame:Show()
@@ -399,7 +399,7 @@ end
 function private:UpdateAuctionConfirmation()
 	local buyoutText = TSMAPI:FormatTextMoneyIcon(private.currentAuction.buyout, nil, true)
 	local itemBuyoutText = TSMAPI:FormatTextMoneyIcon(floor(private.currentAuction.buyout/private.currentAuction.count), nil, true)
-	
+
 	private.confirmationFrame.searchingText:SetText("")
 	private.confirmationFrame.linkText:SetText(private.currentAuction.link)
 	private.confirmationFrame.quantityText:SetText("x"..private.currentAuction.count)
@@ -421,7 +421,7 @@ function private:UpdatePostFrame()
 	local stackSize = min(private.currentAuction.count, numInBags)
 	local currentPerItem = floor(private.currentAuction.buyout/private.currentAuction.count)
 	local currentBuyout = stackSize == private.currentAuction.count and private.currentAuction.buyout or (currentPerItem*stackSize)
-	
+
 	private.postFrame.numInBags = numInBags
 	private.postFrame.linkText:SetText(private.currentAuction.link)
 	private.postFrame.proceed:Enable()
@@ -459,7 +459,7 @@ function private:CreateConfirmationFrame(parent)
 				TSMAPI.AuctionControl:HideConfirmation()
 			end
 		end)
-	
+
 	local bg = CreateFrame("Frame", nil, frame)
 	bg:SetFrameStrata("HIGH")
 	bg:SetPoint("TOPLEFT", parent.content)
@@ -468,7 +468,7 @@ function private:CreateConfirmationFrame(parent)
 	TSMAPI.Design:SetFrameBackdropColor(bg)
 	bg:SetAlpha(.2)
 	frame.bg = bg
-	
+
 	local btn = TSMAPI.GUI:CreateButton(frame, 18, "TSMAHConfirmationActionButton")
 	btn:SetPoint("BOTTOMLEFT", 10, 10)
 	btn:SetPoint("BOTTOMRIGHT", frame, "BOTTOM", -2, 10)
@@ -484,7 +484,7 @@ function private:CreateConfirmationFrame(parent)
 			end
 		end)
 	frame.proceed = btn
-	
+
 	local btn = TSMAPI.GUI:CreateButton(frame, 18)
 	btn:SetPoint("BOTTOMLEFT", frame, "BOTTOM", 2, 10)
 	btn:SetPoint("BOTTOMRIGHT", -10, 10)
@@ -492,41 +492,41 @@ function private:CreateConfirmationFrame(parent)
 	btn:SetText(CLOSE)
 	btn:SetScript("OnClick", function() frame:Hide() end)
 	frame.close = btn
-	
+
 	local linkText = TSMAPI.GUI:CreateLabel(frame)
 	linkText:SetFontObject(GameFontNormal)
 	linkText:SetPoint("TOP", -10, -10)
 	frame.linkText = linkText
-	
+
 	local bg = frame:CreateTexture(nil, "BACKGROUND")
 	bg:SetPoint("TOPLEFT", linkText, -2, 2)
 	bg:SetPoint("BOTTOMRIGHT", linkText, 2, -2)
 	TSMAPI.Design:SetContentColor(bg)
 	linkText.bg = bg
 	bg:Show()
-	
+
 	local quantityText = TSMAPI.GUI:CreateLabel(frame)
 	quantityText:SetPoint("LEFT", linkText, "RIGHT")
 	frame.quantityText = quantityText
-	
+
 	local buyoutText = TSMAPI.GUI:CreateLabel(frame)
 	buyoutText:SetPoint("TOPLEFT", 10, -41)
 	buyoutText:SetJustifyH("LEFT")
 	frame.buyoutText = buyoutText
-	
+
 	local buyoutText2 = TSMAPI.GUI:CreateLabel(frame)
 	buyoutText2:SetPoint("TOPLEFT", buyoutText, "BOTTOMLEFT")
 	buyoutText2:SetJustifyH("LEFT")
 	frame.buyoutText2 = buyoutText2
-	
+
 	local purchasedText = TSMAPI.GUI:CreateLabel(frame)
 	purchasedText:SetPoint("TOPLEFT", 10, -70)
 	frame.purchasedText = purchasedText
-	
+
 	local searchingText = TSMAPI.GUI:CreateLabel(frame)
 	searchingText:SetPoint("CENTER")
 	frame.searchingText = searchingText
-	
+
 	return frame
 end
 
@@ -548,7 +548,7 @@ function private:CreatePostFrame(parent)
 				TSMAPI.AuctionControl:HideConfirmation()
 			end
 		end)
-	
+
 	local bg = CreateFrame("Frame", nil, frame)
 	bg:SetFrameStrata("HIGH")
 	bg:SetPoint("TOPLEFT", parent.content)
@@ -557,7 +557,7 @@ function private:CreatePostFrame(parent)
 	TSMAPI.Design:SetFrameBackdropColor(bg)
 	bg:SetAlpha(0.2)
 	frame.bg = bg
-	
+
 	local btn = TSMAPI.GUI:CreateButton(frame, 18, "TSMAHConfirmationPostButton")
 	btn:SetPoint("BOTTOMLEFT", 10, 10)
 	btn:SetPoint("BOTTOMRIGHT", frame, "BOTTOM", -2, 10)
@@ -573,11 +573,11 @@ function private:CreatePostFrame(parent)
 			postInfo.stackSize = frame.stackSizeInputBox:GetNumber()
 			postInfo.numAuctions = frame.numAuctionsInputBox:GetNumber()
 			postInfo.duration = TSM.db.profile.postDuration
-			
+
 			private:DoPost(postInfo)
 		end)
 	frame.proceed = btn
-	
+
 	local btn = TSMAPI.GUI:CreateButton(frame, 18)
 	btn:SetPoint("BOTTOMLEFT", frame, "BOTTOM", 2, 10)
 	btn:SetPoint("BOTTOMRIGHT", -10, 10)
@@ -585,20 +585,20 @@ function private:CreatePostFrame(parent)
 	btn:SetText(CLOSE)
 	btn:SetScript("OnClick", function() frame:Hide() end)
 	frame.close = btn
-	
+
 	local linkText = TSMAPI.GUI:CreateLabel(frame)
 	linkText:SetFontObject(GameFontNormal)
 	linkText:SetPoint("TOP", -10, -10)
 	frame.linkText = linkText
-	
+
 	local bg = frame:CreateTexture(nil, "BACKGROUND")
 	bg:SetPoint("TOPLEFT", linkText, -2, 2)
 	bg:SetPoint("BOTTOMRIGHT", linkText, 2, -2)
 	TSMAPI.Design:SetContentColor(bg)
 	linkText.bg = bg
 	bg:Show()
-	
-	
+
+
 	local function OnPriceInputBoxTextChanged()
 		local buyout = TSMAPI:UnformatTextMoney(frame.buyoutInputBox:GetText())
 		local perItem = TSMAPI:UnformatTextMoney(frame.perItemInputBox:GetText())
@@ -608,7 +608,7 @@ function private:CreatePostFrame(parent)
 			frame.proceed:Enable()
 		end
 	end
-	
+
 	local function OnPriceInputBoxEditFocusLost(self)
 		local copper = TSMAPI:UnformatTextMoney(self:GetText())
 		if copper then
@@ -624,7 +624,7 @@ function private:CreatePostFrame(parent)
 			self:SetFocus()
 		end
 	end
-	
+
 	local function OnInputBoxTabPressed(self)
 		local boxes = {"buyoutInputBox", "perItemInputBox", "numAuctionsInputBox", "stackSizeInputBox"}
 		self:ClearFocus()
@@ -634,13 +634,13 @@ function private:CreatePostFrame(parent)
 			end
 		end
 	end
-	
+
 	local buyoutLabel = TSMAPI.GUI:CreateLabel(frame)
 	buyoutLabel:SetPoint("TOPLEFT", 10, -40)
 	buyoutLabel:SetHeight(20)
 	buyoutLabel:SetJustifyH("LEFT")
 	buyoutLabel:SetText(L["Auction Buyout:"])
-	
+
 	local buyoutInputBox = TSMAPI.GUI:CreateInputBox(frame)
 	buyoutInputBox:SetJustifyH("RIGHT")
 	buyoutInputBox:SetPoint("TOPRIGHT", -10, -40)
@@ -652,13 +652,13 @@ function private:CreatePostFrame(parent)
 	buyoutInputBox:SetScript("OnTextChanged", OnPriceInputBoxTextChanged)
 	buyoutInputBox:SetScript("OnTabPressed", OnInputBoxTabPressed)
 	frame.buyoutInputBox = buyoutInputBox
-	
+
 	local perItemLabel = TSMAPI.GUI:CreateLabel(frame)
 	perItemLabel:SetPoint("TOPLEFT", 10, -65)
 	perItemLabel:SetHeight(20)
 	perItemLabel:SetJustifyH("LEFT")
 	perItemLabel:SetText(L["Per Item:"])
-	
+
 	local perItemInputBox = TSMAPI.GUI:CreateInputBox(frame)
 	perItemInputBox:SetJustifyH("RIGHT")
 	perItemInputBox:SetPoint("TOPRIGHT", -10, -65)
@@ -670,12 +670,12 @@ function private:CreatePostFrame(parent)
 	perItemInputBox:SetScript("OnTextChanged", OnPriceInputBoxTextChanged)
 	perItemInputBox:SetScript("OnTabPressed", OnInputBoxTabPressed)
 	frame.perItemInputBox = perItemInputBox
-	
-	
+
+
 	local function OnCountInputBoxEditFocusLost(self)
 		local numAuctions = max(1, min(frame.numAuctionsInputBox:GetNumber(), frame.numAuctionsInputBox.max))
 		local stackSize = max(1, min(frame.stackSizeInputBox:GetNumber(), frame.stackSizeInputBox.max))
-		
+
 		if self == frame.stackSizeInputBox then
 			numAuctions = min(numAuctions, floor(frame.numInBags/stackSize))
 		elseif self == frame.numAuctionsInputBox then
@@ -688,7 +688,7 @@ function private:CreatePostFrame(parent)
 		local perItem = TSMAPI:UnformatTextMoney(frame.perItemInputBox:GetText())
 		frame.buyoutInputBox:SetText(TSMAPI:FormatTextMoney(perItem*stackSize, nil, nil, nil, true))
 	end
-	
+
 	local function OnCountInputBoxTextChanged(self)
 		local numAuctions = frame.numAuctionsInputBox:GetNumber()
 		local stackSize = frame.stackSizeInputBox:GetNumber()
@@ -698,13 +698,13 @@ function private:CreatePostFrame(parent)
 			frame.proceed:Enable()
 		end
 	end
-	
+
 	local function OnMaxButtonClicked(self)
 		self.inputBox:SetNumber(self.inputBox.max)
 		self.inputBox:SetFocus()
 		self.inputBox:ClearFocus()
 	end
-	
+
 	local numAuctionsInputBox = TSMAPI.GUI:CreateInputBox(frame)
 	numAuctionsInputBox:SetJustifyH("CENTER")
 	numAuctionsInputBox:SetNumeric(true)
@@ -716,7 +716,7 @@ function private:CreatePostFrame(parent)
 	numAuctionsInputBox:SetScript("OnTextChanged", OnCountInputBoxTextChanged)
 	numAuctionsInputBox:SetScript("OnTabPressed", OnInputBoxTabPressed)
 	frame.numAuctionsInputBox = numAuctionsInputBox
-	
+
 	local stackSizeInputBox = TSMAPI.GUI:CreateInputBox(frame)
 	stackSizeInputBox:SetJustifyH("CENTER")
 	stackSizeInputBox:SetNumeric(true)
@@ -728,18 +728,18 @@ function private:CreatePostFrame(parent)
 	stackSizeInputBox:SetScript("OnTextChanged", OnCountInputBoxTextChanged)
 	stackSizeInputBox:SetScript("OnTabPressed", OnInputBoxTabPressed)
 	frame.stackSizeInputBox = stackSizeInputBox
-	
+
 	local countLabel = TSMAPI.GUI:CreateLabel(frame)
 	countLabel:SetPoint("TOPLEFT", numAuctionsInputBox, "TOPRIGHT", 10, 0)
 	countLabel:SetPoint("TOPRIGHT", stackSizeInputBox, "TOPLEFT", -10, 0)
 	countLabel:SetHeight(20)
 	countLabel:SetJustifyH("CENTER")
 	countLabel:SetText(L["stacks of"])
-	
+
 	local editboxWidth = (frame:GetWidth() - 40 - countLabel:GetStringWidth()) / 2
 	numAuctionsInputBox:SetWidth(editboxWidth)
 	stackSizeInputBox:SetWidth(editboxWidth)
-	
+
 	local maxStackSizeBtn = TSMAPI.GUI:CreateButton(frame, 12)
 	maxStackSizeBtn:SetPoint("TOPLEFT", stackSizeInputBox, "BOTTOMLEFT", 5, -3)
 	maxStackSizeBtn:SetPoint("TOPRIGHT", stackSizeInputBox, "BOTTOMRIGHT", -5, -3)
@@ -748,7 +748,7 @@ function private:CreatePostFrame(parent)
 	maxStackSizeBtn:SetScript("OnClick", OnMaxButtonClicked)
 	maxStackSizeBtn.inputBox = stackSizeInputBox
 	stackSizeInputBox.btn = maxStackSizeBtn
-	
+
 	local maxNumAuctionsBtn = TSMAPI.GUI:CreateButton(frame, 12)
 	maxNumAuctionsBtn:SetPoint("TOPLEFT", numAuctionsInputBox, "BOTTOMLEFT", 5, -3)
 	maxNumAuctionsBtn:SetPoint("TOPRIGHT", numAuctionsInputBox, "BOTTOMRIGHT", -5, -3)
@@ -757,13 +757,13 @@ function private:CreatePostFrame(parent)
 	maxNumAuctionsBtn:SetScript("OnClick", OnMaxButtonClicked)
 	maxNumAuctionsBtn.inputBox = numAuctionsInputBox
 	numAuctionsInputBox.btn = maxNumAuctionsBtn
-	
+
 	local durationLabel = TSMAPI.GUI:CreateLabel(frame)
 	durationLabel:SetPoint("TOPLEFT", 10, -165)
 	durationLabel:SetHeight(20)
 	durationLabel:SetJustifyH("LEFT")
 	durationLabel:SetText(L["Duration:"])
-	
+
 	local list = {AUCTION_DURATION_ONE, AUCTION_DURATION_TWO, AUCTION_DURATION_THREE}
 	local durationDropdown = TSMAPI.GUI:CreateDropdown(frame, list)
 	durationDropdown:SetPoint("TOPLEFT", durationLabel, "TOPRIGHT", 10, 0)
@@ -771,7 +771,7 @@ function private:CreatePostFrame(parent)
 	durationDropdown:SetHeight(20)
 	durationDropdown:SetCallback("OnValueChanged", function(self, _, value) TSM.db.profile.postDuration = value end)
 	frame.durationDropdown = durationDropdown
-	
+
 	return frame
 end
 
@@ -780,7 +780,7 @@ function private:CreateControlButtons(parent)
 	frame:SetHeight(24)
 	frame:SetWidth(390)
 	frame:SetPoint("BOTTOMRIGHT", -20, 6)
-	
+
 	local function OnClick(self)
 		if not private.rt or not private.callback then return end
 		private.confirmationMode = self.which
@@ -790,7 +790,7 @@ function private:CreateControlButtons(parent)
 			private:ShowConfirmationWindow()
 		end
 	end
-	
+
 	local button = TSMAPI.GUI:CreateButton(frame, 18, "TSMAHTabCancelButton")
 	button:SetPoint("TOPLEFT", 0, 0)
 	button:SetWidth(100)
@@ -799,7 +799,7 @@ function private:CreateControlButtons(parent)
 	button.which = "Cancel"
 	button:SetScript("OnClick", OnClick)
 	frame.cancel = button
-	
+
 	local button = TSMAPI.GUI:CreateButton(frame, 18, "TSMAHTabPostButton")
 	button:SetPoint("TOPLEFT", 104, 0)
 	button:SetWidth(100)
@@ -808,7 +808,7 @@ function private:CreateControlButtons(parent)
 	button.which = "Post"
 	button:SetScript("OnClick", OnClick)
 	frame.post = button
-	
+
 	local button = TSMAPI.GUI:CreateButton(frame, 18, "TSMAHTabBuyoutButton")
 	button:SetPoint("TOPLEFT", 208, 0)
 	button:SetWidth(100)
@@ -817,6 +817,6 @@ function private:CreateControlButtons(parent)
 	button.which = "Buyout"
 	button:SetScript("OnClick", OnClick)
 	frame.buyout = button
-	
+
 	return frame
 end

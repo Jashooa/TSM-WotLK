@@ -165,8 +165,7 @@ function Data:ScanPlayerAuctions()
 		local link = GetAuctionItemLink("owner", i)
 		local itemString = TSMAPI:GetItemString(link)
 		local baseItemString = TSMAPI:GetBaseItemString(link)
-		local name, _, quantity, _, _, _, _, _, _, buyout, _, _, _, wasSold, _, wasSold_54 = GetAuctionItemInfo("owner", i)
-		if select(4, GetBuildInfo()) == 50400 then wasSold = wasSold_54 end
+		local name, _, quantity, _, _, _, _, _, buyout, _, _, _, wasSold = GetAuctionItemInfo("owner", i)
 		if wasSold == 0 and itemString then
 			TSM.characters[TSM.CURRENT_PLAYER].auctions[itemString] = (TSM.characters[TSM.CURRENT_PLAYER].auctions[itemString] or 0) + quantity
 			if itemString ~= baseItemString then
@@ -225,7 +224,7 @@ do
 		end
 		tinsert(TSM.characters[player].mailInbox, index, data)
 	end
-	
+
 	local function RemoveInboxMail(player, index)
 		local playerMail = TSM.characters[player].mail
 		for _, itemData in ipairs(TSM.characters[player].mailInbox[index].items) do
@@ -246,7 +245,7 @@ do
 		end
 		tremove(TSM.characters[player].mailInbox, index)
 	end
-	
+
 	local function RemoveInboxMailItem(player, index, itemIndex)
 		local playerMail = TSM.characters[player].mail
 		local itemData = TSM.characters[player].mailInbox[index].items[itemIndex]
@@ -280,7 +279,7 @@ do
 		if not items then error() end
 		InsertInboxMail(player, 1, {items=items, index=nil})
 	end
-	
+
 	local function RemoveMailItem(index, itemIndex)
 		local link = GetInboxItemLink(index, itemIndex)
 		if not link then return end
@@ -300,12 +299,12 @@ do
 			end
 		end
 	end
-	
-	
+
+
 	local tmpBuyouts = {}
 	local function OnAuctionBid(listType, index, bidPlaced)
 		local link = GetAuctionItemLink(listType, index)
-		local name, _, count, _, _, _, _, _, _, buyout = GetAuctionItemInfo(listType, index)
+		local name, _, count, _, _, _, _, _, buyout = GetAuctionItemInfo(listType, index)
 		if bidPlaced == buyout then
 			tinsert(tmpBuyouts, { name = name, link = link, count = count })
 		end
@@ -322,7 +321,7 @@ do
 			end
 		end
 	end
-	
+
 	local function OnAuctionCanceled(index)
 		local link = GetAuctionItemLink("owner", index)
 		local count = select(3, GetAuctionItemInfo("owner", index))
@@ -350,7 +349,7 @@ do
 		AddIncomingMail(altName, items)
 		tinsert(playersToUpdate, altName)
 	end
-	
+
 	local function OnTakeInboxItem(index, itemIndex)
 		for i = (itemIndex or 1), (itemIndex or ATTACHMENTS_MAX_RECEIVE) do
 			local link = GetInboxItemLink(index, i)
@@ -359,7 +358,7 @@ do
 			end
 		end
 	end
-	
+
 	local function OnReturnMail(index)
 		local sender = select(3, GetInboxHeaderInfo(index))
 		local items = {}
@@ -383,7 +382,7 @@ do
 		if numItems == totalItems then
 			wipe(player.mailInbox)
 		end
-		
+
 		local index = 1
 		for i=1, numItems do
 			local items = {}
@@ -406,7 +405,7 @@ do
 							temp[data.link] = temp[data.link] - data.count
 							if temp[data.link] == 0 then temp[data.link] = nil end
 						end
-						
+
 						if not next(temp) then
 							matchIndex = k
 							break

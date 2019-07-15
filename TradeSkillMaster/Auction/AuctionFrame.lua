@@ -48,14 +48,14 @@ function private:CreateTSMAHTab(moduleName, callbackShow, callbackHide)
 	PanelTemplates_SetNumTabs(AuctionFrame, n)
 	PanelTemplates_EnableTab(AuctionFrame, n)
 	auctionTab.tab = tab
-	
+
 	local closeBtn = TSMAPI.GUI:CreateButton(auctionTab, 18)
 	closeBtn:SetPoint("BOTTOMRIGHT", -5, 5)
 	closeBtn:SetWidth(75)
 	closeBtn:SetHeight(24)
 	closeBtn:SetText(CLOSE)
 	closeBtn:SetScript("OnClick", CloseAuctionHouse)
-	
+
 	local iconFrame = CreateFrame("Frame", nil, auctionTab)
 	iconFrame:SetPoint("CENTER", auctionTab, "TOPLEFT", 30, -30)
 	iconFrame:SetHeight(100)
@@ -89,7 +89,7 @@ function private:CreateTSMAHTab(moduleName, callbackShow, callbackHide)
 	ag:SetLooping("REPEAT")
 	iconFrame:SetScript("OnEnter", function() ag:Play() end)
 	iconFrame:SetScript("OnLeave", function() ag:Stop() end)
-	
+
 	local moneyText = TSMAPI.GUI:CreateTitleLabel(auctionTab, 16)
 	moneyText:SetJustifyH("CENTER")
 	moneyText:SetJustifyV("CENTER")
@@ -99,7 +99,7 @@ function private:CreateTSMAHTab(moduleName, callbackShow, callbackHide)
 		self:SetText(TSMAPI:FormatTextMoneyIcon(money))
 	end
 	auctionTab.moneyText = moneyText
-	
+
 	local moneyTextFrame = CreateFrame("Frame", nil, auctionTab)
 	moneyTextFrame:SetAllPoints(moneyText)
 	moneyTextFrame:EnableMouse(true)
@@ -107,7 +107,7 @@ function private:CreateTSMAHTab(moduleName, callbackShow, callbackHide)
 			local currentTotal = 0
 			local incomingTotal = 0
 			for i=1, GetNumAuctionItems("owner") do
-				local count, _, _, _, _, _, _, buyoutAmount = select(3, GetAuctionItemInfo("owner", i))
+				local count, _, _, _, _, _, buyoutAmount = select(3, GetAuctionItemInfo("owner", i))
 				if count == 0 then
 					incomingTotal = incomingTotal + buyoutAmount
 				else
@@ -125,7 +125,7 @@ function private:CreateTSMAHTab(moduleName, callbackShow, callbackHide)
 			GameTooltip:ClearLines()
 			GameTooltip:Hide()
 		end)
-	
+
 	auctionTab:SetScript("OnShow", function(self)
 			self:SetAllPoints()
 			if not self.minimized then
@@ -137,7 +137,7 @@ function private:CreateTSMAHTab(moduleName, callbackShow, callbackHide)
 				callbackHide()
 			end
 		end)
-		
+
 	local contentFrame = CreateFrame("Frame", nil, auctionTab)
 	contentFrame:SetPoint("TOPLEFT", 4, -80)
 	contentFrame:SetPoint("BOTTOMRIGHT", -4, 35)
@@ -153,11 +153,11 @@ function private:InitializeAuctionFrame(auctionTab)
 	AuctionFrame:EnableMouse(true)
 	AuctionFrame:SetScript("OnMouseDown", function(self) if self:IsMovable() then self:StartMoving() end end)
 	AuctionFrame:SetScript("OnMouseUp", function(self) if self:IsMovable() then self:StopMovingOrSizing() end end)
-	
+
 	-- scale the auction frame according to the TSM option
 	if AuctionFrame:GetScale() ~= 1 and TSM.db.profile.auctionFrameScale == 1 then TSM.db.profile.auctionFrameScale = AuctionFrame:GetScale() end
 	AuctionFrame:SetScale(TSM.db.profile.auctionFrameScale)
-	
+
 	local prevTab
 	local function TabChangeHook(self)
 		if self.isTSMTab then
@@ -182,10 +182,10 @@ function private:InitializeAuctionFrame(auctionTab)
 			private:TabHidden()
 		end
 		prevTab = self
-	
+
 	end
 	private:Hook("AuctionFrameTab_OnClick", TabChangeHook, true)
-	
+
 	-- Makes sure the TSM tab hides correctly when used with addons that hook this function to change tabs (ie Auctionator)
 	-- This probably doesn't have to be a SecureHook, but does need to be a Post-Hook.
 	private:SecureHook("ContainerFrameItemButton_OnModifiedClick", function()
@@ -242,15 +242,15 @@ function private:OnTabClick(tab)
 	AuctionFrameMoneyFrame:Hide()
 	AuctionFrameCloseButton:Hide()
 	private:RegisterEvent("PLAYER_MONEY")
-	
+
 	if TSM.db.profile.openAllBags then
 		OpenAllBags()
 	end
 	TSMAPI:CreateTimeDelay("hideAHMoneyFrame", 0.1, function() AuctionFrameMoneyFrame:Hide() end)
-	
+
 	TSMAPI.Design:SetFrameBackdropColor(tab)
 	AuctionFrameTab1:SetPoint("TOPLEFT", AuctionFrame, "BOTTOMLEFT", 15, 1)
-	
+
 	tab:Show()
 	tab.minimized = nil
 	tab.moneyText:SetMoney(GetMoney())
