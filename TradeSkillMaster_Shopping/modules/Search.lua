@@ -125,7 +125,7 @@ function private:CreateSearchBar(parent)
 
 	local function OnUpdate(self)
         --if self:IsEnabled() and not TSMAPI:AHTabIsVisible("Shopping") then
-        if self:IsEnabled() and not TSMAPI:AHTabIsVisible("Shopping") then
+        if not TSMAPI:AHTabIsVisible("Shopping") then
 			self:ClearFocus()
 		end
 	end
