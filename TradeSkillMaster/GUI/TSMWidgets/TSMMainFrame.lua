@@ -87,7 +87,7 @@ local methods = {
 		self.status = nil
 		wipe(self.localstatus)
 	end,
-	
+
 	["LayoutIcons"] = function(self)
 		for _, container in ipairs({self.topLeftIcons, self.topRightIcons}) do
 			if type(container.icons) == "table" and container.icons[1] then
@@ -109,17 +109,17 @@ local methods = {
 
 	["OnWidthSet"] = function(self, width)
 		self.content.width = self.content:GetWidth()
-		
+
 		self.topLeftIcons:ClearAllPoints()
 		self.topLeftIcons:SetPoint("TOPLEFT", 5, 20)
 		self.topLeftIcons:SetPoint("TOPRIGHT", self.frame, "TOP", -115, 20)
 		self.topLeftIcons:SetHeight(51)
-		
+
 		self.topRightIcons:ClearAllPoints()
 		self.topRightIcons:SetPoint("TOPRIGHT", -5, 20)
 		self.topRightIcons:SetPoint("TOPLEFT", self.frame, "TOP", 115, 20)
 		self.topRightIcons:SetHeight(51)
-		
+
 		self:LayoutIcons()
 	end,
 
@@ -130,11 +130,11 @@ local methods = {
 	["SetTitle"] = function(self, title)
 		self.titletext:SetText(title)
 	end,
-	
+
 	["SetIconText"] = function(self, title)
 		self.icontext:SetText(title)
 	end,
-	
+
 	["SetIconLabels"] = function(self, topLeft, topRight)
 		self.topLeftIcons.label = topLeft
 		self.topRightIcons.label = topRight
@@ -147,7 +147,7 @@ local methods = {
 	["Show"] = function(self)
 		self.frame:Show()
 	end,
-	
+
 	["UpdateSelected"] = function(self)
 		for _, container in ipairs({self.topLeftIcons, self.topRightIcons}) do
 			if type(container.icons) == "table" then
@@ -158,13 +158,13 @@ local methods = {
 		end
 		self.selected.dark:Hide()
 	end,
-	
+
 	["AddIcon"] = function(self, info)
 		local container = self[info.where.."Icons"]
 		assert(container, "Invalid icon container.")
-		
+
 		local size = 51
-		
+
 		local btn = CreateFrame("Button", nil, container)
 		btn:SetBackdrop({edgeFile="Interface\\Buttons\\WHITE8X8", edgeSize=2})
 		btn:SetBackdropBorderColor(0, 0, 0, 0.5)
@@ -174,14 +174,14 @@ local methods = {
 		btn.info = info
 		btn.obj = self
 		info.frame = btn
-		
+
 		local image = btn:CreateTexture(nil, "BACKGROUND")
 		image:SetAllPoints()
 		image:SetTexture(info.texture)
 		image:SetTexCoord(0.08, 0.922, 0.09, 0.918)
 		image:SetVertexColor(1, 1, 1)
 		btn.image = image
-		
+
 		local dark = btn:CreateTexture(nil, "OVERLAY")
 		dark:SetAllPoints(image)
 		dark:SetTexture(0, 0, 0, .3)
@@ -198,18 +198,18 @@ local methods = {
 				self.selected = btn
 				self:UpdateSelected()
 			end)
-		
+
 		local highlight = btn:CreateTexture(nil, "HIGHLIGHT")
 		highlight:SetAllPoints(image)
 		highlight:SetTexture(1, 1, 1, .2)
 		highlight:SetBlendMode("ADD")
 		btn.highlight = highlight
-		
+
 		container.icons = container.icons or {}
 		tinsert(container.icons, btn)
-		
+
 		self:LayoutIcons()
-		
+
 		if not container.textLabel then
 			local label = container:CreateFontString()
 			label:SetHeight(12)
@@ -221,7 +221,7 @@ local methods = {
 			label:SetPoint("TOP", 0, -53)
 			container.tooltipAnchor = "ANCHOR_TOP"
 			container.textLabel = label
-			
+
 			-- make the lines that extend the width of the container out from the label
 			local leftHLine = container:CreateTexture()
 			leftHLine:SetPoint("TOPRIGHT", label, "TOPLEFT", -2, -6)
@@ -280,7 +280,7 @@ local function Constructor()
 	frame:SetScript("OnHide", Frame_OnClose)
 	frame.toMove = frame
 	tinsert(UISpecialFrames, frameName)
-	
+
 	local closebutton = CreateFrame("Button", nil, frame)
 	TSMAPI.Design:SetContentColor(closebutton)
 	local highlight = closebutton:CreateTexture(nil, "HIGHLIGHT")
@@ -302,7 +302,7 @@ local function Constructor()
 	TSMAPI.Design:SetWidgetTextColor(label)
 	label:SetText(CLOSE)
 	closebutton:SetFontString(label)
-	
+
 	local iconBtn = CreateFrame("Button", nil, frame)
 	iconBtn:SetWidth(286)
 	iconBtn:SetHeight(286)
@@ -325,11 +325,11 @@ local function Constructor()
 	local image = sizer:CreateTexture(nil, "BACKGROUND")
 	image:SetAllPoints()
 	image:SetTexture("Interface\\Addons\\TradeSkillMaster\\Media\\Sizer")
-	
+
 	local content = CreateFrame("Frame", nil, frame)
 	content:SetPoint("TOPLEFT", 11, -62)
 	content:SetPoint("BOTTOMRIGHT", -11, 20)
-	
+
 	local titletext = frame:CreateFontString()
 	titletext:SetPoint("TOP", 0, -32)
 	titletext:SetHeight(22)
@@ -337,7 +337,7 @@ local function Constructor()
 	titletext:SetJustifyV("CENTER")
 	titletext:SetFont(TSMAPI.Design:GetContentFont(), 22)
 	TSMAPI.Design:SetTitleTextColor(titletext)
-	
+
 	local icontext = iconBtn:CreateFontString(nil, "OVERLAY")
 	icontext:SetPoint("TOP", frame, "TOP", 0, 14)
 	icontext:SetHeight(29)
@@ -345,8 +345,8 @@ local function Constructor()
 	icontext:SetJustifyV("CENTER")
 	icontext:SetFont(TSMAPI.Design:GetContentFont(), 27)
 	icontext:SetTextColor(unpack(ICON_TEXT_COLOR))
-	
-	local helpButton = CreateFrame("Button", nil, frame, "MainHelpPlateButton")
+
+	local helpButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
 	helpButton:SetPoint("BOTTOMLEFT", -10, -30)
 	helpButton:SetScript("OnEnter", function(self)
 		HelpPlateTooltip.ArrowRIGHT:Show()
