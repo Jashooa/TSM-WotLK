@@ -78,7 +78,7 @@ end
 
 function GUI:ShowProfessionWindow()
 	if not TradeSkillFrame then return TSMAPI:CreateTimeDelay("craftingShowProfessionDelay", 0, GUI.ShowProfessionWindow) end
-	if GetTradeSkillLine() == GetSpellInfo(53428) or IsTradeSkillGuild() then
+	if GetTradeSkillLine() == GetSpellInfo(53428) then
 		-- runeforging or guild profession
 		if GUI.frame then
 			GUI.noClose = true
@@ -548,7 +548,7 @@ function GUI:CreateQueueFrame(parent)
 	local function MatOnLeave(_, data)
 		GameTooltip:Hide()
 	end
-	
+
 	local function MatOnClick(_, data)
 		if IsModifiedClick() then
 			local link = select(2, TSMAPI:GetSafeItemInfo(data.itemString))
