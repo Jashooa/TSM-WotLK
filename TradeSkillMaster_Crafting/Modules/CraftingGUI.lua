@@ -124,7 +124,7 @@ function GUI:OnEnable()
 		TSMAPI:CreateTimeDelay("gatheringUpdateThrottle", 0.3, GUI.UpdateGathering)
 	end)
 
-	GUI:UpdateTradeSkills()
+	--GUI:UpdateTradeSkills()
 	GUI.gatheringFrame = GUI:CreateGatheringFrame()
 	if next(TSM.db.factionrealm.gathering.neededMats) then
 		TSMAPI:CreateTimeDelay("gatheringShowThrottle", 0.3, GUI:ShowGatheringFrame())
