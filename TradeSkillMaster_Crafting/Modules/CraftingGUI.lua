@@ -17,55 +17,39 @@ private.gather = {}
 private.shown = {}
 
 
--- Introduced in 4.0.1 http://wowwiki.wikia.com/wiki/API_GetProfessionInfo
--- returns name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier, specializationIndex, specializationOffset
--- we need ONLY skillName, _, level, maxLevel
--- id argument can be:  "tradeSkill1", "tradeSkill2", "cook", "firstAid"
-local function GetProfessionInfo(id)
-	-- store primary profession names
-	local primary = {}
-	local cooking = {}
-	local firstAid = {}
-	-- find which primary professions we have
-	for i = 1, GetNumSkillLines() do
-		if GetSkillLineInfo(i) == "Professions" then
-			i = i+1 -- skip header
-			while select(2, GetSkillLineInfo(i)) ~= 1 do
-				local name, _, _, skillRank, _, _, skillMaxRank = GetSkillLineInfo(i)
-				table.insert(primary, {name=name, skillRank=skillRank, skillMaxRank=skillMaxRank})
-				i = i+1
-			end
-		elseif GetSkillLineInfo(i) == "Secondary Skills" then
-			i = i+1 -- skip header
-			while select(2, GetSkillLineInfo(i)) ~= 1 do
-				local name, _, _, skillRank, _, _, skillMaxRank = GetSkillLineInfo(i)
-				if name == "Cooking" then
-					table.insert(cooking, {name=name, skillRank=skillRank, skillMaxRank=skillMaxRank})
-				elseif name == "First Aid" then
-					table.insert(firstAid, {name=name, skillRank=skillRank, skillMaxRank=skillMaxRank})
-				end
-				i = i+1
-			end
-		end
-	end
-	--local spell, profession = GetSpellLink(primary[1])
-	local profession
-	if id == "tradeSkill1" then
-		profession = primary[1]
-	elseif id == "tradeSkill2" then
-		profession = primary[2]
-	elseif id == "cook" then
-		profession = cooking
-	elseif id == "firstAid" then
-		profession = firstAid
-	else
-		error("Invalid GetProfessionInfo id")
-		return nil
-	end
-	if profession == nil then
-		return nil
-	end
-	return profession.name, nil, profession.skillRank, profession.skillMaxRank
+-- Return skill line id for professions
+local function GetProfessions()
+    local primary = {}
+    local prof1
+    local prof2
+    local cooking
+    local firstAid
+
+    for i = 1, GetNumSkillLines() do
+        if GetSkillLineInfo(i) == "Professions" then
+            i = i + 1
+            while not select(2, GetSkillLineInfo(i)) do
+                table.insert(primary, i)
+                i = i + 1
+            end
+        elseif GetSkillLineInfo(i) == "Secondary Skills" then
+            i = i + 1
+            while not select(2, GetSkillLineInfo(i)) do
+                local name = GetSkillLineInfo(i)
+                if name == "Cooking" then
+                    cooking = i
+                elseif name == "First Aid" then
+                    firstAid = i
+                end
+                i = i + 1
+            end
+        end
+    end
+
+    prof1 = primary[1]
+    prof2 = primary[2]
+
+    return prof1, prof2, cooking, firstAid
 end
 
 -- Helper function to find spellID associated to spellname
@@ -287,22 +271,18 @@ function GUI:UpdateTradeSkills()
 	local playerName = UnitName("player")
 	if not playerName then return end
 	TSM.db.factionrealm.tradeSkills[playerName] = TSM.db.factionrealm.tradeSkills[playerName] or {}
-	--SpellBook_UpdateProfTab()
 
-	--local tradeSkill1, tradeSkill2, _, _, cook, firstAid = GetProfessions()
-	--local btns = { PrimaryProfession1SpellButtonBottom, PrimaryProfession2SpellButtonBottom, SecondaryProfession3SpellButtonRight, SecondaryProfession4SpellButtonRight }
+    local tradeSkill1, tradeSkill2, cook, firstAid = GetProfessions()
 	local old = TSM.db.factionrealm.tradeSkills[playerName]
 	TSM.db.factionrealm.tradeSkills[playerName] = {}
-	for i, id in pairs({ "tradeSkill1", "tradeSkill2", "cook", "firstAid" }) do -- needs to be pairs since may not be continuous indices
-		--if not btns[i]:GetParent().missingHeader:IsVisible() then
-        local skillName, _, level, maxLevel = GetProfessionInfo(id)
-            if skillName ~= nil then
+	for i, id in pairs({ tradeSkill1, tradeSkill2, cook, firstAid }) do -- needs to be pairs since may not be continuous indices
+        local skillName, _, _, level, _, _, maxLevel = GetSkillLineInfo(id)
+        if skillName then
             TSM.db.factionrealm.tradeSkills[playerName][skillName] = old[skillName] or {}
             TSM.db.factionrealm.tradeSkills[playerName][skillName].level = level
             TSM.db.factionrealm.tradeSkills[playerName][skillName].maxLevel = maxLevel
             TSM.db.factionrealm.tradeSkills[playerName][skillName].isSecondary = (i > 2) and true
 
-            --local spellBookSlot = btns[i]:GetID() + btns[i]:GetParent().spellOffset
             local _, link = GetSpellLink(skillName)
             if link then
                 TSM.db.factionrealm.tradeSkills[playerName][skillName].link = link
