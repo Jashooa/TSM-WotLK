@@ -1243,7 +1243,7 @@ function GUI:CreateCraftInfoFrame(parent)
 	buttonsFrame.queueBtn = queueBtn
 
 	local createBtn = TSMAPI.GUI:CreateButton(buttonsFrame, 15)
-	createBtn:SetText(CREATE_PROFESSION)
+	createBtn:SetText(CREATE)
 	createBtn:SetPoint("BOTTOMLEFT")
 	createBtn:SetPoint("BOTTOMRIGHT", buttonsFrame, "BOTTOM", -2, 0)
 	createBtn:SetHeight(20)
