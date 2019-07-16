@@ -376,7 +376,11 @@ function GUI:ClearFilters()
 	TradeSkillOnlyShowMakeable(false)
 	TradeSkillOnlyShowSkillUps(false)
 	TradeSkillFrame_Update()
-	--TradeSkillSetFilter(-1, -1)
+    --TradeSkillSetFilter(-1, -1)
+    UIDropDownMenu_SetSelectedID(TradeSkillSubClassDropDown, 1);
+    SetTradeSkillSubClassFilter(0, 1, 1);
+    UIDropDownMenu_SetSelectedID(TradeSkillInvSlotDropDown, 1);
+    SetTradeSkillInvSlotFilter(0, 1, 1);
 	SetTradeSkillItemNameFilter("")
 	ExpandTradeSkillSubClass(0)
 	GUI.frame.content.professionsTab.searchBar:SetTextColor(1, 1, 1, 0.5)
@@ -886,7 +890,7 @@ function GUI:CreateProfessionsTab(parent)
 
 	local searchBar = TSMAPI.GUI:CreateInputBox(frame, "TSMCraftingSearchBar")
 	searchBar:SetPoint("TOPLEFT", 5, -35)
-	searchBar:SetWidth(240)
+	searchBar:SetWidth(220)
 	searchBar:SetHeight(24)
 	searchBar:SetText(SEARCH)
 	searchBar:SetTextColor(1, 1, 1, 0.5)
@@ -910,25 +914,9 @@ function GUI:CreateProfessionsTab(parent)
 	searchBar:SetScript("OnEnterPressed", searchBar.ClearFocus)
 	frame.searchBar = searchBar
 
-	--[[local btn = TSMAPI.GUI:CreateButton(frame, 14)
-	btn:SetPoint("TOPLEFT", searchBar, "TOPRIGHT", 5, 0)
-	btn:SetWidth(80)
-	btn:SetHeight(24)
-	btn:SetText(L["Clear Filters"])
-	btn:SetScript("OnClick", GUI.ClearFilters)
-	frame.clearFilterBtn = btn
-
-	local btn = TSMAPI.GUI:CreateButton(frame, 14, "TSMCraftingFilterButton")
-	btn:SetPoint("TOPLEFT", frame.clearFilterBtn, "TOPRIGHT", 5, 0)
-	btn:SetPoint("TOPRIGHT", -5, -35)
-	btn:SetHeight(24)
-	btn:SetText(L["Filters >>"])
-	btn:SetScript("OnClick", function(self) ToggleDropDownMenu(1, nil, TradeSkillFilterDropDown, "TSMCraftingFilterButton", btn:GetWidth(), 0) end)
-    frame.filterBtn = btn--]]
-
 	local btn = TSMAPI.GUI:CreateButton(frame, 14, "TSMCraftingFilterButton")
 	btn:SetPoint("TOPLEFT", searchBar, "TOPRIGHT", 5, 0)
-	btn:SetWidth(80)
+	btn:SetWidth(75)
 	btn:SetHeight(24)
 	btn:SetText("SubClass >>")
 	btn:SetScript("OnClick", function(self) ToggleDropDownMenu(1, nil, TradeSkillSubClassDropDown, "TSMCraftingFilterButton", 0, 0) end)
@@ -936,11 +924,27 @@ function GUI:CreateProfessionsTab(parent)
 
 	local btn = TSMAPI.GUI:CreateButton(frame, 14, "TSMCraftingFilter2Button")
 	btn:SetPoint("TOPLEFT", frame.filterBtn, "TOPRIGHT", 5, 0)
-	btn:SetPoint("TOPRIGHT", -5, -35)
+	btn:SetWidth(75)
 	btn:SetHeight(24)
 	btn:SetText("InvSlot >>")
 	btn:SetScript("OnClick", function(self) ToggleDropDownMenu(1, nil, TradeSkillInvSlotDropDown, "TSMCraftingFilter2Button", 0, 0) end)
-	frame.filter2Btn = btn
+    frame.filter2Btn = btn
+
+	local btn = TSMAPI.GUI:CreateButton(frame, 14)
+	btn:SetPoint("TOPLEFT", frame.filter2Btn, "TOPRIGHT", 5, 0)
+	btn:SetPoint("TOPRIGHT", -5, -35)
+	btn:SetHeight(24)
+	btn:SetText(L["Clear Filters"])
+	btn:SetScript("OnClick", GUI.ClearFilters)
+	frame.clearFilterBtn = btn
+
+	--[[local btn = TSMAPI.GUI:CreateButton(frame, 14, "TSMCraftingFilterButton")
+	btn:SetPoint("TOPLEFT", frame.clearFilterBtn, "TOPRIGHT", 5, 0)
+	btn:SetPoint("TOPRIGHT", -5, -35)
+	btn:SetHeight(24)
+	btn:SetText(L["Filters >>"])
+	btn:SetScript("OnClick", function(self) ToggleDropDownMenu(1, nil, TradeSkillFilterDropDown, "TSMCraftingFilterButton", btn:GetWidth(), 0) end)
+    frame.filterBtn = btn]]--
 
 	TSMAPI.GUI:CreateHorizontalLine(frame, -64)
 
