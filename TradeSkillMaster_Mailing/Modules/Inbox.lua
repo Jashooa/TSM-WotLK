@@ -251,7 +251,7 @@ function private:InboxUpdate()
 	for i = 1, numMail do
 		mailInfo[i] = ""
 		local isInvoice = select(4, GetInboxText(i))
-		local _, _, sender, subject, money, cod, daysLeft, hasItem = GetInboxHeaderInfo(i)
+        local _, _, sender, subject, money, cod, daysLeft, hasItem = GetInboxHeaderInfo(i)
 		if isInvoice then
             local invoiceType, itemName, playerName, bid, _, _, ahcut = GetInboxInvoiceInfo(i)
             local quantity = 0
@@ -266,7 +266,9 @@ function private:InboxUpdate()
 				mailInfo[i] = format(L["Buy: %s (%d) | %s | %s"], itemLink, quantity, TSMAPI:FormatTextMoney(bid, redColor), FormatDaysLeft(daysLeft, i))
 			elseif invoiceType == "seller" then
 				collectGold = collectGold + bid - ahcut
-				mailInfo[i] = format(L["Sale: %s (%d) | %s | %s"], itemName, quantity, TSMAPI:FormatTextMoney(bid - ahcut, greenColor), FormatDaysLeft(daysLeft, i))
+                mailInfo[i] = format(L["Sale: %s (%d) | %s | %s"], itemName, quantity, TSMAPI:FormatTextMoney(bid - ahcut, greenColor), FormatDaysLeft(daysLeft, i))
+			elseif invoiceType == "seller_temp_invoice" then
+				mailInfo[i] = format("Sale Pending: %s (%d) | %s | %s", itemName, quantity, TSMAPI:FormatTextMoney(bid - ahcut, greenColor), FormatDaysLeft(daysLeft, i))
 			end
 		elseif hasItem then
 			local itemLink
@@ -352,7 +354,7 @@ function private:ShouldOpenMail(index)
 		return true
 	elseif private.mode == "sales" then
 		local money = select(5, GetInboxHeaderInfo(index))
-		if money > 0 and GetInboxInvoiceInfo(index) == "seller" then
+		if (money > 0 and GetInboxInvoiceInfo(index) == "seller") or GetInboxInvoiceInfo(index) == "seller_temp_invoice" then
 			return true
 		end
 	elseif private.mode == "buys" then
@@ -393,7 +395,7 @@ function private:StartAutoLooting(mode)
 	local canCollectMail
 	if private.mode == "all" then
 		local total
-		private.autoLootTotal, total = GetInboxNumItems()
+        private.autoLootTotal, total = GetInboxNumItems()
 		canCollectMail = not (private.autoLootTotal == 0 and total == 0)
 	else
 		for i = 1, GetInboxNumItems() do
@@ -417,13 +419,13 @@ function private:StartAutoLooting(mode)
 end
 
 function private:AutoLoot()
-	TSMAPI:CancelFrame("mailSkipDelay")
+    TSMAPI:CancelFrame("mailSkipDelay")
 
 	-- Already looted everything after the invalid indexes we had, so fail it
 	if private.lootIndex > 1 and private.lootIndex > GetInboxNumItems() then
-		if private.resetIndex then
+        if private.resetIndex then
 			private:StopAutoLooting()
-		else
+        else
 			private.resetIndex = true
 			private.lootIndex = 1
 			private:AutoLoot()
@@ -431,8 +433,9 @@ function private:AutoLoot()
 		return
 	end
 
-	local money, cod, _, items, _, _, _, _, isGM = select(5, GetInboxHeaderInfo(private.lootIndex))
-	if not isGM and (not cod or cod <= 0) and ((money and money > 0) or (items and items > 0)) then
+    local money, cod, _, items, _, _, _, _, isGM = select(5, GetInboxHeaderInfo(private.lootIndex))
+    local tempInvoice = GetInboxInvoiceInfo(private.lootIndex)
+	if not isGM and (not cod or cod <= 0) and ((money and money > 0) or (items and items > 0) or tempInvoice) then
 		TSMAPI:CancelFrame("mailWaitDelay")
 		if private.mode == "all" then
 			if money > 0 then
@@ -471,8 +474,8 @@ end
 function private:LootMailItem(index)
 	if TSM.db.global.inboxMessages then
 		local _, _, sender, subject, money, cod, _, hasItem = GetInboxHeaderInfo(index)
-		sender = sender or "?"
-		if select(4, GetInboxText(index)) then
+        sender = sender or "?"
+        if select(4, GetInboxText(index)) then
 			-- it's an invoice
             local invoiceType, itemName, playerName, bid, _, _, ahcut = GetInboxInvoiceInfo(index)
             local quantity = 0
@@ -486,7 +489,10 @@ function private:LootMailItem(index)
 				local itemLink = GetInboxItemLink(index, 1) or itemName
 				TSM:Printf(L["Collected purchase of %s (%d) for %s."], itemLink, quantity, TSMAPI:FormatTextMoney(bid, redColor))
 			elseif invoiceType == "seller" then
-				TSM:Printf(L["Collected sale of %s (%d) for %s."], itemName, quantity, TSMAPI:FormatTextMoney(bid - ahcut, greenColor))
+                TSM:Printf(L["Collected sale of %s (%d) for %s."], itemName, quantity, TSMAPI:FormatTextMoney(bid - ahcut, greenColor))
+			elseif invoiceType == "seller_temp_invoice" then
+                TSM:Printf("Deleted sale pending of %s (%d) for %s.", itemName, quantity, TSMAPI:FormatTextMoney(bid - ahcut, greenColor))
+                DeleteInboxItem(index)
 			end
 		elseif hasItem then
 			local itemLink
