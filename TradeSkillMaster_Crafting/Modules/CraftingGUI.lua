@@ -268,6 +268,11 @@ function GUI:EventHandler(event, ...)
 end
 
 function GUI:UpdateTradeSkills()
+	if (select(2, GetTradeSkillInfo(1)) ~= "header") then
+		TSM:Print("Tradeskill is not fully loaded, try to scan it later.")
+		return
+    end
+
 	local playerName = UnitName("player")
 	if not playerName then return end
 	TSM.db.factionrealm.tradeSkills[playerName] = TSM.db.factionrealm.tradeSkills[playerName] or {}
