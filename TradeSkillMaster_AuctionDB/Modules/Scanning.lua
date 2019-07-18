@@ -57,10 +57,10 @@ function Scan.ProcessGetAllScan(self)
         local _, _, count, _, _, _, _, _, buyout = GetAuctionItemInfo("list", i)
 		--Ignore Iceblade Arrow and Shatter Rounds.
 		--	There's so many of these two items listed that we run out of memory before we can finish.
-		if itemID and itemID ~= 52021 and itemID ~= 52020 and buyout and buyout > 0 then
+        if itemID and itemID ~= 52021 and itemID ~= 52020 and buyout and buyout > 0 then
 		--if itemID and buyout and buyout > 0 then
 			data[itemID] = data[itemID] or {records={}, minBuyout=math.huge, quantity=0}
-			data[itemID].minBuyout = min(data[itemID].minBuyout, buyout)
+			data[itemID].minBuyout = min(data[itemID].minBuyout, floor(buyout/count))
 			data[itemID].quantity = data[itemID].quantity + count
 			for j=1, count do
 				tinsert(data[itemID].records, floor(buyout/count))
@@ -195,7 +195,7 @@ function Scan:ProcessScanData(scanData)
 				for i=1, record.count do
 					tinsert(records, itemBuyout)
 				end
-			end
+            end
 			data[itemID] = {records=records, minBuyout=minBuyout, quantity=quantity}
 		end
 	end
